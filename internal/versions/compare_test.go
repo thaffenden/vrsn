@@ -36,6 +36,21 @@ func TestCompare(t *testing.T) {
 			now:         "1.0.3",
 			assertError: test.IsSentinelError(versions.ErrInvalidBump),
 		},
+		"ReturnsNoErrorForValidPatch": {
+			was:         "1.0.0",
+			now:         "1.0.1",
+			assertError: require.NoError,
+		},
+		"ReturnsNoErrorForValidMinor": {
+			was:         "1.0.0",
+			now:         "1.1.0",
+			assertError: require.NoError,
+		},
+		"ReturnsNoErrorForValidMajor": {
+			was:         "1.0.0",
+			now:         "2.0.0",
+			assertError: require.NoError,
+		},
 	}
 
 	for name, testCase := range testCases {
