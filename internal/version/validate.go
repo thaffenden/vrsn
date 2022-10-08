@@ -14,9 +14,9 @@ type Version struct {
 	Patch int
 }
 
-// ValidateVersion checks the input string is a valid semantic version and
+// Validate checks the input string is a valid semantic version and
 // parses it into a Version struct.
-func ValidateVersion(version string) (Version, error) {
+func Validate(version string) (Version, error) {
 	if !strings.Contains(version, ".") {
 		return Version{}, ErrNoVersionParts
 	}

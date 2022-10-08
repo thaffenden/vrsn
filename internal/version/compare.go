@@ -19,19 +19,19 @@ const (
 	ValidMajor
 )
 
-// Versions compares the provided versions to see if the increase is a valid
+// Compare compares the provided versions to see if the increase is a valid
 // semver increment.
-func Versions(wasInput string, nowInput string) (ChangeType, error) {
+func Compare(wasInput string, nowInput string) (ChangeType, error) {
 	if wasInput == nowInput {
 		return NoIncrement, nil
 	}
 
-	was, err := ValidateVersion(wasInput)
+	was, err := Validate(wasInput)
 	if err != nil {
 		return 0, err
 	}
 
-	now, err := ValidateVersion(nowInput)
+	now, err := Validate(nowInput)
 	if err != nil {
 		return 0, err
 	}
