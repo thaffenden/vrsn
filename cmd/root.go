@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/thaffenden/check-version/internal/flags"
@@ -15,16 +16,21 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		_, err := versions.Compare(flags.Was, flags.Now)
+		fmt.Printf("was: %s\nnow: %s\n", flags.Was, flags.Now)
+
+		err := versions.Compare(flags.Was, flags.Now)
 		if err != nil {
 			return err
 		}
 
+		fmt.Printf("valid version bump\n")
+
 		return nil
 	},
-	Short:            "check semantic versions are valid",
-	TraverseChildren: true,
-	Use:              "check-version",
+	Short:         "check semantic versions are valid",
+	SilenceErrors: true,
+	SilenceUsage:  true,
+	Use:           "check-version",
 }
 
 // Execute executes the root command.
@@ -36,4 +42,8 @@ func Execute() error {
 func init() {
 	rootCmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
 	rootCmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
+	rootCmd.SetHelpFunc(help)
+}
+
+func help(cmd *cobra.Command, args []string) {
 }

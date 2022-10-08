@@ -2,13 +2,20 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/thaffenden/check-version/cmd"
 )
 
 func main() {
+	code := 0
+	defer func() {
+		os.Exit(code)
+	}()
+
 	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+		code = 1
+		fmt.Printf("error comparing versions: %v\n", err)
 	}
 }
