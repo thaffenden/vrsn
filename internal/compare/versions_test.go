@@ -30,6 +30,18 @@ func TestVersions(t *testing.T) {
 			assertError: test.IsSentinelError(compare.ErrComparingVersions),
 			expected:    0,
 		},
+		"ReturnsErrorWhenWasFailsValidation": {
+			was:         "",
+			now:         "1.1.1",
+			assertError: require.Error,
+			expected:    0,
+		},
+		"ReturnsErrorWhenNowFailsValidation": {
+			was:         "1.1.1",
+			now:         "",
+			assertError: require.Error,
+			expected:    0,
+		},
 	}
 
 	for name, testCase := range testCases {
