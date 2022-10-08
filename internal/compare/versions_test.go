@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/thaffenden/check-version/internal/compare"
-	"github.com/thaffenden/check-version/internal/test"
 )
 
 func TestVersions(t *testing.T) {
@@ -23,12 +22,6 @@ func TestVersions(t *testing.T) {
 			now:         "1.0.0",
 			assertError: require.NoError,
 			expected:    compare.NoIncrement,
-		},
-		"ReturnsErrorForUnhandledScenario": {
-			was:         "y.e.h",
-			now:         "w.o.w",
-			assertError: test.IsSentinelError(compare.ErrComparingVersions),
-			expected:    0,
 		},
 		"ReturnsErrorWhenWasFailsValidation": {
 			was:         "",

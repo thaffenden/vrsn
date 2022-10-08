@@ -17,6 +17,15 @@ func TestValidateVersion(t *testing.T) {
 		errorExpected require.ErrorAssertionFunc
 		expected      compare.Version
 	}{
+		"ReturnsVersionStructForValidInput": {
+			input:         "34.9.154",
+			errorExpected: require.NoError,
+			expected: compare.Version{
+				Major: 34,
+				Minor: 9,
+				Patch: 154,
+			},
+		},
 		"ReturnsErrorIfVersionDoesNotContainSeparator": {
 			input:         "100",
 			errorExpected: test.IsSentinelError(compare.ErrNoVersionParts),
@@ -25,6 +34,21 @@ func TestValidateVersion(t *testing.T) {
 		"ReturnsErrorIfInputDoesNotHaveThreeParts": {
 			input:         "2.2",
 			errorExpected: test.IsSentinelError(compare.ErrNumVersionParts),
+			expected:      compare.Version{},
+		},
+		"ReturnsErrorIfMajorVersionCannotBeConvertedToInt": {
+			input:         "x.1.1",
+			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
+			expected:      compare.Version{},
+		},
+		"ReturnsErrorIfMinorVersionCannotBeConvertedToInt": {
+			input:         "1.x.1",
+			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
+			expected:      compare.Version{},
+		},
+		"ReturnsErrorIfPatchVersionCannotBeConvertedToInt": {
+			input:         "1.5.x",
+			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
 			expected:      compare.Version{},
 		},
 	}
