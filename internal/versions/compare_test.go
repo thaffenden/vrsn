@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/thaffenden/check-version/internal/test"
 	"github.com/thaffenden/check-version/internal/versions"
 )
 
@@ -14,12 +15,11 @@ func TestCompare(t *testing.T) {
 		was         string
 		now         string
 		assertError require.ErrorAssertionFunc
-		expected    versions.ChangeType
 	}{
-		"ReturnsNoIncrementWhenVersionsAreTheSame": {
+		"ReturnsVersionNotBumpedErrorWhenVersionsAreTheSame": {
 			was:         "1.0.0",
 			now:         "1.0.0",
-			assertError: require.NoError,
+			assertError: test.IsSentinelError(versions.ErrVersionNotBumped),
 		},
 		"ReturnsErrorWhenWasFailsValidation": {
 			was:         "",
@@ -30,6 +30,11 @@ func TestCompare(t *testing.T) {
 			was:         "1.1.1",
 			now:         "",
 			assertError: require.Error,
+		},
+		"ReturnsInvalidBumpErrorWhenNotValidSemVer": {
+			was:         "1.0.0",
+			now:         "1.0.3",
+			assertError: test.IsSentinelError(versions.ErrInvalidBump),
 		},
 	}
 

@@ -2,8 +2,6 @@
 package versions
 
 import (
-	"fmt"
-
 	"github.com/thaffenden/check-version/internal/version"
 )
 
@@ -11,7 +9,7 @@ import (
 // semver increment.
 func Compare(wasInput string, nowInput string) error {
 	if wasInput == nowInput {
-		return fmt.Errorf("version has not been bumped")
+		return ErrVersionNotBumped
 	}
 
 	was, err := version.Validate(wasInput)
@@ -36,5 +34,5 @@ func Compare(wasInput string, nowInput string) error {
 		return nil
 	}
 
-	return fmt.Errorf("invalid version bump")
+	return ErrInvalidBump
 }
