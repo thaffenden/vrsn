@@ -10,6 +10,9 @@ import (
 	"github.com/thaffenden/check-version/internal/versions"
 )
 
+// Version is the CLI version set via linker flags at build time.
+var Version string
+
 var rootCmd = &cobra.Command{
 	RunE: func(ccmd *cobra.Command, args []string) error {
 		if err := flags.Validate(flags.Was, flags.Now); err != nil {
@@ -31,6 +34,7 @@ var rootCmd = &cobra.Command{
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	Use:           "check-version",
+	Version:       Version,
 }
 
 // Execute executes the root command.
