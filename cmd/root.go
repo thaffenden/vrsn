@@ -42,8 +42,4 @@ func Execute() error {
 func init() {
 	rootCmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
 	rootCmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
-	rootCmd.SetHelpFunc(help)
-}
-
-func help(cmd *cobra.Command, args []string) {
 }
