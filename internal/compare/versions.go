@@ -36,6 +36,16 @@ func Versions(was string, now string) (ChangeType, error) {
 		return 0, errors.WithMessagef(ErrNowNotSemVer, "now: %s", now)
 	}
 
+	wasParts := strings.Split(was, ".")
+	if len(wasParts) != 3 {
+		return 0, errors.WithMessagef(ErrNumVersionParts, "segments: %s", wasParts)
+	}
+
+	nowParts := strings.Split(now, ".")
+	if len(nowParts) != 3 {
+		return 0, errors.WithMessagef(ErrNumVersionParts, "segments: %s", nowParts)
+	}
+
 	return 0, ErrComparingVersions
 }
 

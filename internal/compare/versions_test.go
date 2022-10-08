@@ -42,6 +42,12 @@ func TestVersions(t *testing.T) {
 			assertError: test.IsSentinelError(compare.ErrNowNotSemVer),
 			expected:    0,
 		},
+		"ReturnsErrorIfWasDoesNotIncludeEnoughVersionParts": {
+			was:         "1.0",
+			now:         "1.0.1",
+			assertError: test.IsSentinelError(compare.ErrNumVersionParts),
+			expected:    0,
+		},
 	}
 
 	for name, testCase := range testCases {
