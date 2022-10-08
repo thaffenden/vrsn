@@ -1,27 +1,27 @@
-package compare_test
+package versions_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/check-version/internal/compare"
+	"github.com/thaffenden/check-version/internal/versions"
 )
 
-func TestVersions(t *testing.T) {
+func TestCompare(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
 		was         string
 		now         string
 		assertError require.ErrorAssertionFunc
-		expected    compare.ChangeType
+		expected    versions.ChangeType
 	}{
 		"ReturnsNoIncrementWhenVersionsAreTheSame": {
 			was:         "1.0.0",
 			now:         "1.0.0",
 			assertError: require.NoError,
-			expected:    compare.NoIncrement,
+			expected:    versions.NoIncrement,
 		},
 		"ReturnsErrorWhenWasFailsValidation": {
 			was:         "",
@@ -43,7 +43,7 @@ func TestVersions(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			actual, err := compare.Versions(tc.was, tc.now)
+			actual, err := versions.Compare(tc.was, tc.now)
 			tc.assertError(t, err)
 
 			assert.Equal(t, tc.expected.Message(), actual.Message())

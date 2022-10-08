@@ -1,12 +1,13 @@
-package compare_test
+package version_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/check-version/internal/compare"
+	"github.com/thaffenden/check-version/internal/semantic"
 	"github.com/thaffenden/check-version/internal/test"
+	"github.com/thaffenden/check-version/internal/version"
 )
 
 func TestValidateVersion(t *testing.T) {
@@ -15,12 +16,12 @@ func TestValidateVersion(t *testing.T) {
 	testCases := map[string]struct {
 		input         string
 		errorExpected require.ErrorAssertionFunc
-		expected      compare.Version
+		expected      semantic.Version
 	}{
 		"ReturnsVersionStructForValidInput": {
 			input:         "34.9.154",
 			errorExpected: require.NoError,
-			expected: compare.Version{
+			expected: semantic.Version{
 				Major: 34,
 				Minor: 9,
 				Patch: 154,
@@ -28,28 +29,28 @@ func TestValidateVersion(t *testing.T) {
 		},
 		"ReturnsErrorIfVersionDoesNotContainSeparator": {
 			input:         "100",
-			errorExpected: test.IsSentinelError(compare.ErrNoVersionParts),
-			expected:      compare.Version{},
+			errorExpected: test.IsSentinelError(version.ErrNoVersionParts),
+			expected:      semantic.Version{},
 		},
 		"ReturnsErrorIfInputDoesNotHaveThreeParts": {
 			input:         "2.2",
-			errorExpected: test.IsSentinelError(compare.ErrNumVersionParts),
-			expected:      compare.Version{},
+			errorExpected: test.IsSentinelError(version.ErrNumVersionParts),
+			expected:      semantic.Version{},
 		},
 		"ReturnsErrorIfMajorVersionCannotBeConvertedToInt": {
 			input:         "x.1.1",
-			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
-			expected:      compare.Version{},
+			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
+			expected:      semantic.Version{},
 		},
 		"ReturnsErrorIfMinorVersionCannotBeConvertedToInt": {
 			input:         "1.x.1",
-			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
-			expected:      compare.Version{},
+			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
+			expected:      semantic.Version{},
 		},
 		"ReturnsErrorIfPatchVersionCannotBeConvertedToInt": {
 			input:         "1.5.x",
-			errorExpected: test.IsSentinelError(compare.ErrConvertingToInt),
-			expected:      compare.Version{},
+			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
+			expected:      semantic.Version{},
 		},
 	}
 
@@ -59,7 +60,7 @@ func TestValidateVersion(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			actual, err := compare.ValidateVersion(tc.input)
+			actual, err := version.Validate(tc.input)
 			tc.errorExpected(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})

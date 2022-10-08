@@ -1,15 +1,12 @@
-package compare
+package version
 
 // Error is the error type.
 type Error uint
 
 const (
-	// ErrComparingVersions is the error if the values fall through all of the
-	// expected comparison checks.
-	ErrComparingVersions Error = iota
 	// ErrConvertingToInt is the error thrown when a version part cannot be
 	// converted to a string.
-	ErrConvertingToInt
+	ErrConvertingToInt Error = iota + 1
 	// ErrNoVersionParts is the error when the version string does not contain any
 	// '.' to split into version parts.
 	ErrNoVersionParts
@@ -21,9 +18,6 @@ const (
 // Error returns the error string for the error enum.
 func (e Error) Error() string {
 	switch e {
-	case ErrComparingVersions:
-		return "error comparing versions"
-
 	case ErrConvertingToInt:
 		return "error converting version part to int"
 

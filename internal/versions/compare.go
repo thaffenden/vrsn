@@ -1,8 +1,10 @@
-// Package compare contains logic for the comparison of the versions.
-package compare
+// Package versions contains logic for the comparison of the versions.
+package versions
 
 import (
 	"log"
+
+	"github.com/thaffenden/check-version/internal/version"
 )
 
 // ChangeType is the type used to hold specifics about the version change.
@@ -19,19 +21,19 @@ const (
 	ValidMajor
 )
 
-// Versions compares the provided versions to see if the increase is a valid
+// Compare compares the provided versions to see if the increase is a valid
 // semver increment.
-func Versions(wasInput string, nowInput string) (ChangeType, error) {
+func Compare(wasInput string, nowInput string) (ChangeType, error) {
 	if wasInput == nowInput {
 		return NoIncrement, nil
 	}
 
-	was, err := ValidateVersion(wasInput)
+	was, err := version.Validate(wasInput)
 	if err != nil {
 		return 0, err
 	}
 
-	now, err := ValidateVersion(nowInput)
+	now, err := version.Validate(nowInput)
 	if err != nil {
 		return 0, err
 	}
