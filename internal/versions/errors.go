@@ -4,17 +4,20 @@ package versions
 type Error uint
 
 const (
-	// ErrComparingVersions is the error if the values fall through all of the
-	// expected comparison checks.
-	ErrComparingVersions Error = iota + 1
+	// ErrInvalidBump is the error when the version has changed but to a value
+	// that is not valid sem ver.
+	ErrInvalidBump Error = iota + 1
+	// ErrVersionNotBumped is the error when the version has not been bumped.
+	ErrVersionNotBumped
 )
 
 // Error returns the error string for the error enum.
 func (e Error) Error() string {
 	switch e {
-	case ErrComparingVersions:
-		return "error comparing versions"
-
+	case ErrInvalidBump:
+		return "invalid version bump"
+	case ErrVersionNotBumped:
+		return "version has not been bumped"
 	default:
 		return "unknown error"
 	}

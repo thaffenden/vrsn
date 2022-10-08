@@ -3,8 +3,8 @@ package versions_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/thaffenden/check-version/internal/test"
 	"github.com/thaffenden/check-version/internal/versions"
 )
 
@@ -15,25 +15,41 @@ func TestCompare(t *testing.T) {
 		was         string
 		now         string
 		assertError require.ErrorAssertionFunc
-		expected    versions.ChangeType
 	}{
-		"ReturnsNoIncrementWhenVersionsAreTheSame": {
+		"ReturnsVersionNotBumpedErrorWhenVersionsAreTheSame": {
 			was:         "1.0.0",
 			now:         "1.0.0",
-			assertError: require.NoError,
-			expected:    versions.NoIncrement,
+			assertError: test.IsSentinelError(versions.ErrVersionNotBumped),
 		},
 		"ReturnsErrorWhenWasFailsValidation": {
 			was:         "",
 			now:         "1.1.1",
 			assertError: require.Error,
-			expected:    0,
 		},
 		"ReturnsErrorWhenNowFailsValidation": {
 			was:         "1.1.1",
 			now:         "",
 			assertError: require.Error,
-			expected:    0,
+		},
+		"ReturnsInvalidBumpErrorWhenNotValidSemVer": {
+			was:         "1.0.0",
+			now:         "1.0.3",
+			assertError: test.IsSentinelError(versions.ErrInvalidBump),
+		},
+		"ReturnsNoErrorForValidPatch": {
+			was:         "1.0.0",
+			now:         "1.0.1",
+			assertError: require.NoError,
+		},
+		"ReturnsNoErrorForValidMinor": {
+			was:         "1.0.0",
+			now:         "1.1.0",
+			assertError: require.NoError,
+		},
+		"ReturnsNoErrorForValidMajor": {
+			was:         "1.0.0",
+			now:         "2.0.0",
+			assertError: require.NoError,
 		},
 	}
 
@@ -43,10 +59,8 @@ func TestCompare(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			actual, err := versions.Compare(tc.was, tc.now)
+			err := versions.Compare(tc.was, tc.now)
 			tc.assertError(t, err)
-
-			assert.Equal(t, tc.expected.Message(), actual.Message())
 		})
 	}
 }
