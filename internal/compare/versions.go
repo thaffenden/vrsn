@@ -2,9 +2,7 @@
 package compare
 
 import (
-	"strings"
-
-	"github.com/pkg/errors"
+	"log"
 )
 
 // ChangeType is the type used to hold specifics about the version change.
@@ -23,28 +21,22 @@ const (
 
 // Versions compares the provided versions to see if the increase is a valid
 // semver increment.
-func Versions(was string, now string) (ChangeType, error) {
-	if was == now {
+func Versions(wasInput string, nowInput string) (ChangeType, error) {
+	if wasInput == nowInput {
 		return NoIncrement, nil
 	}
 
-	if !strings.Contains(was, ".") {
-		return 0, errors.WithMessagef(ErrWasNotSemVer, "was: %s", was)
+	was, err := ValidateVersion(wasInput)
+	if err != nil {
+		return 0, err
 	}
 
-	if !strings.Contains(now, ".") {
-		return 0, errors.WithMessagef(ErrNowNotSemVer, "now: %s", now)
+	now, err := ValidateVersion(nowInput)
+	if err != nil {
+		return 0, err
 	}
 
-	wasParts := strings.Split(was, ".")
-	if len(wasParts) != 3 {
-		return 0, errors.WithMessagef(ErrNumVersionParts, "segments: %s", wasParts)
-	}
-
-	nowParts := strings.Split(now, ".")
-	if len(nowParts) != 3 {
-		return 0, errors.WithMessagef(ErrNumVersionParts, "segments: %s", nowParts)
-	}
+	log.Printf("was: %v\nnow: %v", was, now)
 
 	return 0, ErrComparingVersions
 }

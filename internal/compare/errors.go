@@ -8,6 +8,9 @@ const (
 	ErrNowNotSemVer Error = iota
 	// ErrWasNotSemVer is the error when both was or now are not supplied.
 	ErrWasNotSemVer
+	// ErrNoVersionParts is the error when the version string does not contain any
+	// '.' to split into version parts.
+	ErrNoVersionParts
 	// ErrComparingVersions is the error if the values fall through all of the
 	// expected comparison checks.
 	ErrComparingVersions
@@ -30,6 +33,9 @@ func (e Error) Error() string {
 
 	case ErrWasNotSemVer:
 		return "was value did not appear to be a semantic version"
+
+	case ErrNoVersionParts:
+		return "version string does not contain any . splitting version segments"
 
 	default:
 		return "unknown error"

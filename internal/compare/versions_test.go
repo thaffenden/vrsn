@@ -30,24 +30,6 @@ func TestVersions(t *testing.T) {
 			assertError: test.IsSentinelError(compare.ErrComparingVersions),
 			expected:    0,
 		},
-		"ReturnsErrorIfWasDoesNotIncludeDecimal": {
-			was:         "100",
-			now:         "2.3.4",
-			assertError: test.IsSentinelError(compare.ErrWasNotSemVer),
-			expected:    0,
-		},
-		"ReturnsErrorIfNowDoesNotIncludeDecimal": {
-			was:         "1.0.0",
-			now:         "234",
-			assertError: test.IsSentinelError(compare.ErrNowNotSemVer),
-			expected:    0,
-		},
-		"ReturnsErrorIfWasDoesNotIncludeEnoughVersionParts": {
-			was:         "1.0",
-			now:         "1.0.1",
-			assertError: test.IsSentinelError(compare.ErrNumVersionParts),
-			expected:    0,
-		},
 	}
 
 	for name, testCase := range testCases {
