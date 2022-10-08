@@ -3,6 +3,8 @@ package versions
 
 import (
 	"log"
+
+	"github.com/thaffenden/check-version/internal/version"
 )
 
 // ChangeType is the type used to hold specifics about the version change.
@@ -26,12 +28,12 @@ func Compare(wasInput string, nowInput string) (ChangeType, error) {
 		return NoIncrement, nil
 	}
 
-	was, err := Validate(wasInput)
+	was, err := version.Validate(wasInput)
 	if err != nil {
 		return 0, err
 	}
 
-	now, err := Validate(nowInput)
+	now, err := version.Validate(nowInput)
 	if err != nil {
 		return 0, err
 	}
