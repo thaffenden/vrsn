@@ -1,3 +1,4 @@
+// Package cmd contains all of the CLI commands.
 package cmd
 
 import (
@@ -14,6 +15,7 @@ var rootCmd = &cobra.Command{
 	Use:   "check-version",
 }
 
+// Execute executes the root command.
 func Execute() error {
 	ctx := context.Background()
 	return rootCmd.ExecuteContext(ctx)
