@@ -1,4 +1,4 @@
-package compare
+package version
 
 import (
 	"strconv"
