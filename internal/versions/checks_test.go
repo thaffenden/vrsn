@@ -17,13 +17,23 @@ func TestIsValidMajor(t *testing.T) {
 		expected bool
 	}{
 		"ReturnsTrueForValidMajor": {
-			was:      semantic.Version{Major: 0},
-			now:      semantic.Version{Major: 1},
+			was:      semantic.Version{Major: 0, Minor: 0, Patch: 420},
+			now:      semantic.Version{Major: 1, Minor: 0, Patch: 0},
 			expected: true,
 		},
-		"ReturnsFalseForInValidMajor": {
-			was:      semantic.Version{Major: 9},
-			now:      semantic.Version{Major: 8},
+		"ReturnsFalseWhenMajorTooHigh": {
+			was:      semantic.Version{Major: 8, Minor: 3, Patch: 19},
+			now:      semantic.Version{Major: 10, Minor: 0, Patch: 0},
+			expected: false,
+		},
+		"ReturnsFalseWhenMinorIsNotReset": {
+			was:      semantic.Version{Major: 2, Minor: 0, Patch: 4},
+			now:      semantic.Version{Major: 3, Minor: 1, Patch: 0},
+			expected: false,
+		},
+		"ReturnsFalseWhenPatchIsNotReset": {
+			was:      semantic.Version{Major: 30, Minor: 812, Patch: 1},
+			now:      semantic.Version{Major: 31, Minor: 0, Patch: 1},
 			expected: false,
 		},
 	}
@@ -49,13 +59,23 @@ func TestIsValidMinor(t *testing.T) {
 		expected bool
 	}{
 		"ReturnsTrueForValidMinor": {
-			was:      semantic.Version{Minor: 4},
-			now:      semantic.Version{Minor: 5},
+			was:      semantic.Version{Major: 19, Minor: 4, Patch: 23},
+			now:      semantic.Version{Major: 19, Minor: 5, Patch: 0},
 			expected: true,
 		},
-		"ReturnsFalseForInValidMinor": {
-			was:      semantic.Version{Minor: 4},
-			now:      semantic.Version{Minor: 6},
+		"ReturnsFalseWhenMinorTooHigh": {
+			was:      semantic.Version{Major: 1, Minor: 4, Patch: 8},
+			now:      semantic.Version{Major: 1, Minor: 6, Patch: 0},
+			expected: false,
+		},
+		"ReturnsFalseWhenMajorIsIncreased": {
+			was:      semantic.Version{Major: 7, Minor: 1, Patch: 9573},
+			now:      semantic.Version{Major: 8, Minor: 2, Patch: 0},
+			expected: false,
+		},
+		"ReturnsFalseWhenPatchIsNotReset": {
+			was:      semantic.Version{Major: 365, Minor: 19, Patch: 4},
+			now:      semantic.Version{Major: 365, Minor: 20, Patch: 4},
 			expected: false,
 		},
 	}
@@ -81,13 +101,23 @@ func TestIsValidPatch(t *testing.T) {
 		expected bool
 	}{
 		"ReturnsTrueForValidPatch": {
-			was:      semantic.Version{Patch: 4},
-			now:      semantic.Version{Patch: 5},
+			was:      semantic.Version{Major: 1, Minor: 0, Patch: 4},
+			now:      semantic.Version{Major: 1, Minor: 0, Patch: 5},
 			expected: true,
 		},
-		"ReturnsFalseForInValidPatch": {
-			was:      semantic.Version{Patch: 4},
-			now:      semantic.Version{Patch: 6},
+		"ReturnsFalseWhenPatchTooHigh": {
+			was:      semantic.Version{Major: 0, Minor: 1, Patch: 4},
+			now:      semantic.Version{Major: 0, Minor: 1, Patch: 6},
+			expected: false,
+		},
+		"ReturnsFalseWhenMajorIsIncreased": {
+			was:      semantic.Version{Major: 0, Minor: 1, Patch: 4},
+			now:      semantic.Version{Major: 1, Minor: 1, Patch: 5},
+			expected: false,
+		},
+		"ReturnsFalseWhenMinorIsIncreased": {
+			was:      semantic.Version{Major: 0, Minor: 1, Patch: 4},
+			now:      semantic.Version{Major: 0, Minor: 2, Patch: 5},
 			expected: false,
 		},
 	}
