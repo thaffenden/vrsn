@@ -31,6 +31,11 @@ func TestValidate(t *testing.T) {
 			now:         "",
 			assertError: test.IsSentinelError(flags.ErrNoNowValue),
 		},
+		"ReturnsNoErrorWhenBothSupplied": {
+			was:         "6.6.6",
+			now:         "9.9.9",
+			assertError: require.NoError,
+		},
 	}
 
 	for name, testCase := range testCases {
