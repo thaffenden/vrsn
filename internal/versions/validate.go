@@ -1,4 +1,4 @@
-package version
+package versions
 
 import (
 	"strconv"
@@ -7,8 +7,8 @@ import (
 	"github.com/thaffenden/check-version/internal/sentinel"
 )
 
-// Version holds the details of the semantic version parts.
-type Version struct {
+// SemVer holds the details of the semantic version parts.
+type SemVer struct {
 	Major int
 	Minor int
 	Patch int
@@ -16,32 +16,32 @@ type Version struct {
 
 // Validate checks the input string is a valid semantic version and
 // parses it into a Version struct.
-func Validate(version string) (Version, error) {
+func Validate(version string) (SemVer, error) {
 	if !strings.Contains(version, ".") {
-		return Version{}, ErrNoVersionParts
+		return SemVer{}, ErrNoVersionParts
 	}
 
 	parts := strings.Split(version, ".")
 	if len(parts) != 3 {
-		return Version{}, ErrNumVersionParts
+		return SemVer{}, ErrNumVersionParts
 	}
 
 	major, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return Version{}, sentinel.WithMessage(err, ErrConvertingToInt, "major version")
+		return SemVer{}, sentinel.WithMessage(err, ErrConvertingToInt, "major version")
 	}
 
 	minor, err := strconv.Atoi(parts[1])
 	if err != nil {
-		return Version{}, sentinel.WithMessage(err, ErrConvertingToInt, "minor version")
+		return SemVer{}, sentinel.WithMessage(err, ErrConvertingToInt, "minor version")
 	}
 
 	patch, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return Version{}, sentinel.WithMessage(err, ErrConvertingToInt, "patch version")
+		return SemVer{}, sentinel.WithMessage(err, ErrConvertingToInt, "patch version")
 	}
 
-	return Version{
+	return SemVer{
 		Major: major,
 		Minor: minor,
 		Patch: patch,

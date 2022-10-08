@@ -1,4 +1,4 @@
-package version
+package versions
 
 // Error is the error type.
 type Error uint

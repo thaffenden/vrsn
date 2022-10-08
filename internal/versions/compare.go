@@ -1,5 +1,5 @@
-// Package version contains logic for the comparison of the versions.
-package version
+// Package versions contains logic for the comparison of the versions.
+package versions
 
 import (
 	"log"
