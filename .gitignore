@@ -1,3 +1,4 @@
 check-version
 .DS_Store
 _null-ls*
+coverage.out
