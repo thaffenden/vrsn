@@ -2,7 +2,6 @@ package files
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -57,7 +56,7 @@ func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
 			return strings.Split(lineText, `"`)[1], nil
 		}
 	}
-	return "", errors.New("error getting version from Cargo.toml")
+	return "", ErrGettingVersionFromTOML
 }
 
 func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
@@ -68,7 +67,7 @@ func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 		}
 	}
 
-	return "", errors.New("error getting version from package.json")
+	return "", ErrGettingVersionFromPackageJSON
 }
 
 func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {
@@ -77,5 +76,5 @@ func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {
 		return scanner.Text(), nil
 	}
 
-	return "", errors.New("error getting version from VERSION file")
+	return "", ErrGettingVersionFromVERSION
 }

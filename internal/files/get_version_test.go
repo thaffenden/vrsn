@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/thaffenden/vrsn/internal/files"
+	"github.com/thaffenden/vrsn/internal/test"
 )
 
 func TestGetVersionFromFile(t *testing.T) {
@@ -30,11 +31,23 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: require.NoError,
 			expected:    "2.14.741",
 		},
+		"ReturnsErrorFromInvalidCargoTOML": {
+			parentDir:   "no-version",
+			inputFile:   "Cargo.toml",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
 		"ReturnsVersionFromPackageJSON": {
 			parentDir:   "all",
 			inputFile:   "package.json",
 			assertError: require.NoError,
 			expected:    "1.0.4",
+		},
+		"ReturnsErrorFromInvalidPackageJSON": {
+			parentDir:   "no-version",
+			inputFile:   "package.json",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromPackageJSON),
+			expected:    "",
 		},
 		"ReturnsVersionFromPyprojectTOML": {
 			parentDir:   "all",
@@ -42,11 +55,23 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: require.NoError,
 			expected:    "9.8.123456",
 		},
+		"ReturnsErrorFromInvalidPyprojectTOML": {
+			parentDir:   "no-version",
+			inputFile:   "pyproject.toml",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
 		"ReturnsVersionFromVERSIONFile": {
 			parentDir:   "all",
 			inputFile:   "VERSION",
 			assertError: require.NoError,
 			expected:    "6.6.6",
+		},
+		"ReturnsErrorFromInvalidVERSIONFile": {
+			parentDir:   "no-version",
+			inputFile:   "VERSION",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromVERSION),
+			expected:    "",
 		},
 	}
 
