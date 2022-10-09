@@ -12,6 +12,10 @@ var Version string
 
 var rootCmd = &cobra.Command{
 	RunE: func(ccmd *cobra.Command, args []string) error {
+		err := ccmd.Help()
+		if err != nil {
+			return err
+		}
 		return nil
 	},
 	Short:   "check semantic versions are valid",
