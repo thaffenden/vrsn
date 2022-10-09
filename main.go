@@ -16,6 +16,6 @@ func main() {
 
 	if err := cmd.Execute(); err != nil {
 		code = 1
-		fmt.Printf("error comparing versions: %v\n", err)
+		fmt.Printf("error: %v\n", err)
 	}
 }
