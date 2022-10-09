@@ -42,14 +42,21 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 // with the function used to extract the version from that file.
 func versionFileMap() map[string]func(*bufio.Scanner) (string, error) {
 	return map[string]func(*bufio.Scanner) (string, error){
-		"Cargo.toml":     getVersionFromCargoTOML,
+		"Cargo.toml":     getVersionFromTOML,
 		"package.json":   getVersionFromPackageJSON,
-		"pyproject.toml": getVersionFromPyprojectTOML,
+		"pyproject.toml": getVersionFromTOML,
 		"VERSION":        getVersionFromVersionFile,
 	}
 }
 
-func getVersionFromCargoTOML(scanner *bufio.Scanner) (string, error) {
+func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `version =`) {
+			return strings.Split(lineText, `"`)[1], nil
+		}
+	}
 	return "", errors.New("error getting version from Cargo.toml")
 }
 
@@ -62,10 +69,6 @@ func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	}
 
 	return "", errors.New("error getting version from package.json")
-}
-
-func getVersionFromPyprojectTOML(scanner *bufio.Scanner) (string, error) {
-	return "", errors.New("error getting version from pyproject.toml")
 }
 
 func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {

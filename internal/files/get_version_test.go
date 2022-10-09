@@ -24,17 +24,29 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: require.Error,
 			expected:    "",
 		},
-		"ReturnsVersionFromVERSIONFile": {
+		"ReturnsVersionFromCargoTOML": {
 			parentDir:   "all",
-			inputFile:   "VERSION",
+			inputFile:   "Cargo.toml",
 			assertError: require.NoError,
-			expected:    "6.6.6",
+			expected:    "2.14.741",
 		},
 		"ReturnsVersionFromPackageJSON": {
 			parentDir:   "all",
 			inputFile:   "package.json",
 			assertError: require.NoError,
 			expected:    "1.0.4",
+		},
+		"ReturnsVersionFromPyprojectTOML": {
+			parentDir:   "all",
+			inputFile:   "pyproject.toml",
+			assertError: require.NoError,
+			expected:    "9.8.123456",
+		},
+		"ReturnsVersionFromVERSIONFile": {
+			parentDir:   "all",
+			inputFile:   "VERSION",
+			assertError: require.NoError,
+			expected:    "6.6.6",
 		},
 	}
 
