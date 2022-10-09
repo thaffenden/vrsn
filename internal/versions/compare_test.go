@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/check-version/internal/test"
-	"github.com/thaffenden/check-version/internal/versions"
+	"github.com/thaffenden/vrsn/internal/test"
+	"github.com/thaffenden/vrsn/internal/versions"
 )
 
 func TestCompare(t *testing.T) {

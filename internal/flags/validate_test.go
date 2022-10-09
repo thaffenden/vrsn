@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/check-version/internal/flags"
-	"github.com/thaffenden/check-version/internal/test"
+	"github.com/thaffenden/vrsn/internal/flags"
+	"github.com/thaffenden/vrsn/internal/test"
 )
 
 func TestValidate(t *testing.T) {
