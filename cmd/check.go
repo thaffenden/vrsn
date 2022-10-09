@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
 	"github.com/thaffenden/vrsn/internal/versions"
 )
@@ -13,13 +15,34 @@ func NewCmdCheck() *cobra.Command {
 	cmd := &cobra.Command{
 		RunE: func(ccmd *cobra.Command, args []string) error {
 			// check for expected version files in directory.
+			curDir, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+
+			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
+			if err != nil {
+				return err
+			}
+
+			if len(versionFiles) > 1 {
+				return fmt.Errorf("looks like you have several version files: %s", versionFiles)
+			}
+
+			if len(versionFiles) == 1 {
+				flags.Now, err = files.GetVersionFromFile(curDir, versionFiles[0])
+				if err != nil {
+					return err
+				}
+			}
+
 			if err := flags.Validate(flags.Was, flags.Now); err != nil {
 				return err
 			}
 
 			fmt.Printf("was: %s\nnow: %s\n", flags.Was, flags.Now)
 
-			err := versions.Compare(flags.Was, flags.Now)
+			err = versions.Compare(flags.Was, flags.Now)
 			if err != nil {
 				return err
 			}
