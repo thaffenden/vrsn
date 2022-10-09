@@ -4,6 +4,7 @@ package files
 import (
 	"os"
 
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 )
 
@@ -33,10 +34,5 @@ func GetVersionFilesInDirectory(dir string) ([]string, error) {
 }
 
 func supportedVersionFiles() []string {
-	return []string{
-		"Cargo.toml",
-		"package.json",
-		"pyproject.toml",
-		"VERSION",
-	}
+	return maps.Keys(versionFileMap())
 }
