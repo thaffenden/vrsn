@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/thaffenden/check-version/cmd"
+	"github.com/thaffenden/vrsn/cmd"
 )
 
 func main() {

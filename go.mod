@@ -1,4 +1,4 @@
-module github.com/thaffenden/check-version
+module github.com/thaffenden/vrsn
 
 go 1.18
 

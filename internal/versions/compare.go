@@ -2,7 +2,7 @@
 package versions
 
 import (
-	"github.com/thaffenden/check-version/internal/version"
+	"github.com/thaffenden/vrsn/internal/version"
 )
 
 // Compare compares the provided versions to see if the increase is a valid

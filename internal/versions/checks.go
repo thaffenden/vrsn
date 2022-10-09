@@ -1,6 +1,6 @@
 package versions
 
-import "github.com/thaffenden/check-version/internal/semantic"
+import "github.com/thaffenden/vrsn/internal/semantic"
 
 // IsValidMajor checks if the version bump is a valid major bump.
 func IsValidMajor(was semantic.Version, now semantic.Version) bool {

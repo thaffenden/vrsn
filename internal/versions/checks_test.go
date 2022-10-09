@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/thaffenden/check-version/internal/semantic"
-	"github.com/thaffenden/check-version/internal/versions"
+	"github.com/thaffenden/vrsn/internal/semantic"
+	"github.com/thaffenden/vrsn/internal/versions"
 )
 
 func TestIsValidMajor(t *testing.T) {

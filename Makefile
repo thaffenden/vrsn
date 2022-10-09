@@ -1,10 +1,10 @@
-BINARY_NAME=check-version
+BINARY_NAME=vrsn
 DIR ?= ./...
 VERSION ?= $(shell head -n 1 VERSION)
 
 .PHONY: build
 build:
-	@go build -ldflags "-X github.com/thaffenden/check-version/cmd.Version=${VERSION}" -o ${BINARY_NAME}
+	@go build -ldflags "-X github.com/thaffenden/vrsn/cmd.Version=${VERSION}" -o ${BINARY_NAME}
 
 .PHONY: fmt
 fmt:

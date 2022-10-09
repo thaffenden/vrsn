@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thaffenden/check-version/internal/semantic"
-	"github.com/thaffenden/check-version/internal/sentinel"
+	"github.com/thaffenden/vrsn/internal/semantic"
+	"github.com/thaffenden/vrsn/internal/sentinel"
 )
 
 // Validate checks the input string is a valid semantic version and

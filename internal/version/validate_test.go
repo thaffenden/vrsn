@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/check-version/internal/semantic"
-	"github.com/thaffenden/check-version/internal/test"
-	"github.com/thaffenden/check-version/internal/version"
+	"github.com/thaffenden/vrsn/internal/semantic"
+	"github.com/thaffenden/vrsn/internal/test"
+	"github.com/thaffenden/vrsn/internal/version"
 )
 
 func TestValidateVersion(t *testing.T) {
