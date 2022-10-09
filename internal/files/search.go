@@ -29,10 +29,6 @@ func GetVersionFilesInDirectory(dir string) ([]string, error) {
 		}
 	}
 
-	if len(versionFiles) == 0 {
-		return []string{}, ErrNoVersionFilesInDir
-	}
-
 	return versionFiles, nil
 }
 

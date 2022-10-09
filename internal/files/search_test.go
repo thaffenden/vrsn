@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/thaffenden/vrsn/internal/files"
-	"github.com/thaffenden/vrsn/internal/test"
 )
 
 func TestGetVersionFilesInDirectory(t *testing.T) {
@@ -18,9 +17,9 @@ func TestGetVersionFilesInDirectory(t *testing.T) {
 		assertError   require.ErrorAssertionFunc
 		expectedFiles []string
 	}{
-		"ReturnsErrorWhenNoVersionFilesFound": {
+		"ReturnsEmptySliceWhenNoVersionFilesFound": {
 			directory:     "testdata/empty",
-			assertError:   test.IsSentinelError(files.ErrNoVersionFilesInDir),
+			assertError:   require.NoError,
 			expectedFiles: []string{},
 		},
 		"ReturnsSupportVersionFilesWhenFound": {
@@ -32,6 +31,11 @@ func TestGetVersionFilesInDirectory(t *testing.T) {
 				"pyproject.toml",
 				"VERSION",
 			},
+		},
+		"ReturnsErrorWhenDirectoryDoesNotExist": {
+			directory:     "testdata/foo",
+			assertError:   require.Error,
+			expectedFiles: []string{},
 		},
 	}
 
