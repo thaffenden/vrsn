@@ -2,10 +2,12 @@ package files
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // GetVersionFromFile reads the version file and returns the semantic
@@ -29,14 +31,17 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 
 	scanner := bufio.NewScanner(file)
 
-	version := extractVersionFunc(scanner)
+	version, err := extractVersionFunc(scanner)
+	if err != nil {
+		return "", err
+	}
 	return version, nil
 }
 
 // versionFileMap is a map containing the expected name of the version file
 // with the function used to extract the version from that file.
-func versionFileMap() map[string]func(*bufio.Scanner) string {
-	return map[string]func(*bufio.Scanner) string{
+func versionFileMap() map[string]func(*bufio.Scanner) (string, error) {
+	return map[string]func(*bufio.Scanner) (string, error){
 		"Cargo.toml":     getVersionFromCargoTOML,
 		"package.json":   getVersionFromPackageJSON,
 		"pyproject.toml": getVersionFromPyprojectTOML,
@@ -44,22 +49,30 @@ func versionFileMap() map[string]func(*bufio.Scanner) string {
 	}
 }
 
-func getVersionFromCargoTOML(scanner *bufio.Scanner) string {
-	return ""
+func getVersionFromCargoTOML(scanner *bufio.Scanner) (string, error) {
+	return "", errors.New("error getting version from Cargo.toml")
 }
 
-func getVersionFromPackageJSON(scanner *bufio.Scanner) string {
-	return ""
-}
-
-func getVersionFromPyprojectTOML(scanner *bufio.Scanner) string {
-	return ""
-}
-
-func getVersionFromVersionFile(scanner *bufio.Scanner) string {
+func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	for scanner.Scan() {
-		return scanner.Text()
+		lineText := scanner.Text()
+		if strings.Contains(lineText, `"version": "`) {
+			return strings.Split(lineText, `"`)[3], nil
+		}
 	}
 
-	return ""
+	return "", errors.New("error getting version from package.json")
+}
+
+func getVersionFromPyprojectTOML(scanner *bufio.Scanner) (string, error) {
+	return "", errors.New("error getting version from pyproject.toml")
+}
+
+func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {
+	for scanner.Scan() {
+		// Single line file, so can just return on first line.
+		return scanner.Text(), nil
+	}
+
+	return "", errors.New("error getting version from VERSION file")
 }
