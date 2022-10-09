@@ -3,11 +3,8 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/thaffenden/vrsn/internal/flags"
-	"github.com/thaffenden/vrsn/internal/versions"
 )
 
 // Version is the CLI version set via linker flags at build time.
@@ -15,27 +12,11 @@ var Version string
 
 var rootCmd = &cobra.Command{
 	RunE: func(ccmd *cobra.Command, args []string) error {
-		// check for expected version files in directory.
-		if err := flags.Validate(flags.Was, flags.Now); err != nil {
-			return err
-		}
-
-		fmt.Printf("was: %s\nnow: %s\n", flags.Was, flags.Now)
-
-		err := versions.Compare(flags.Was, flags.Now)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("valid version bump\n")
-
 		return nil
 	},
-	Short:         "check semantic versions are valid",
-	SilenceErrors: true,
-	SilenceUsage:  true,
-	Use:           "check-version",
-	Version:       Version,
+	Short:   "check semantic versions are valid",
+	Use:     "vrsn",
+	Version: Version,
 }
 
 // Execute executes the root command.
@@ -45,6 +26,5 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
-	rootCmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
+	rootCmd.AddCommand(NewCmdCheck())
 }
