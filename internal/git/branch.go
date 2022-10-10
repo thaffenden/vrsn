@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -42,5 +43,5 @@ func gitCommand(dir string, errMsg string, args ...string) (string, error) {
 		return "", errors.Wrapf(err, "%s: %s", errMsg, stdErr.String())
 	}
 
-	return stdOut.String(), nil
+	return strings.Trim(stdOut.String(), "\n"), nil
 }

@@ -34,7 +34,6 @@ func NewCmdCheck() *cobra.Command {
 
 			// TODO: only show this in verbose mode.
 			fmt.Printf("current branch: %s\n", currentBranch)
-			// if currnet branch == flags.BaseBranch
 
 			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
 			if err != nil {
@@ -68,7 +67,7 @@ func NewCmdCheck() *cobra.Command {
 					return err
 				}
 
-				flags.Was, err = files.GetVersionFromFile(curDir, baseBranchVersion)
+				flags.Was, err = files.GetVersionFromString(versionFiles[0], baseBranchVersion)
 				if err != nil {
 					return err
 				}
