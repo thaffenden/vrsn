@@ -1,6 +1,7 @@
 package files_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -41,9 +42,7 @@ func TestIsGitDir(t *testing.T) {
 			t.Parallel()
 
 			if tc.inputDir == "testdata/all" {
-				// Git won't let you commit the `.git` directory but that's needed for this
-				// test, so just rename the directory before the test runs.
-				_ = os.Rename("testdata/all/gitdir", "testdata/all/.git")
+				renameDir("gitdir", ".git")
 			}
 
 			actual, err := files.IsGitDir(tc.inputDir)
@@ -51,4 +50,14 @@ func TestIsGitDir(t *testing.T) {
 			assert.Equal(t, tc.expected, actual)
 		})
 	}
+
+	t.Cleanup(func() {
+		renameDir(".git", "gitdir")
+	})
+}
+
+func renameDir(from, to string) {
+	// Git won't let you commit the `.git` directory but that's needed for this
+	// test, so just rename the directory before the test runs.
+	_ = os.Rename(fmt.Sprintf("testdata/all/%s", from), fmt.Sprintf("testdata/all/%s", to))
 }
