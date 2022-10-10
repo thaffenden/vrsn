@@ -1,6 +1,7 @@
 package files_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,6 +39,12 @@ func TestIsGitDir(t *testing.T) {
 
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
+
+			if tc.inputDir == "testdata/all" {
+				// Git won't let you commit the `.git` directory but that's needed for this
+				// test, so just rename the directory before the test runs.
+				_ = os.Rename("testdata/all/gitdir", "testdata/all/.git")
+			}
 
 			actual, err := files.IsGitDir(tc.inputDir)
 			tc.errorExpected(t, err)
