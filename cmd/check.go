@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
+	"github.com/thaffenden/vrsn/internal/git"
 	"github.com/thaffenden/vrsn/internal/versions"
 )
 
@@ -24,6 +25,14 @@ func NewCmdCheck() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			currentBranch, err := git.CurrentBranch(curDir)
+			if err != nil {
+				return err
+			}
+
+			// TODO: only show this in verbose mode.
+			fmt.Printf("current branch: %s\n", currentBranch)
 
 			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
 			if err != nil {
