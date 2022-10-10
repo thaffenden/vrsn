@@ -4,7 +4,11 @@ VERSION ?= $(shell head -n 1 VERSION)
 
 .PHONY: build
 build:
-	@go build -ldflags "-X github.com/thaffenden/vrsn/cmd.Version=${VERSION}" -o ${BINARY_NAME}
+	@GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X github.com/thaffenden/vrsn/cmd.Version=${VERSION}" -o ${BINARY_NAME}
+
+.PHONY:
+build-image:
+	@docker build --tag ${BINARY_NAME}:local .
 
 .PHONY: fmt
 fmt:
