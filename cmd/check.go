@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
@@ -37,16 +36,16 @@ func NewCmdCheck() *cobra.Command {
 			}
 
 			if len(versionFiles) > 1 {
-				return fmt.Errorf("looks like you have several version files: %s", versionFiles)
+				return errors.Errorf("looks like you have several version files: %s", versionFiles)
 			}
 
 			if len(versionFiles) == 0 && flags.Now == "" {
-				fmt.Println("no version files found in directory and no --now flag provided")
+				log.Info("no version files found in directory and no --now flag provided")
 				return errors.New("please either pass version with --now flag or run inside a directory that uses a version file")
 			}
 
 			if len(versionFiles) == 0 && flags.Was == "" {
-				fmt.Println("no version files found in directory and no --was flag provided")
+				log.Info("no version files found in directory and no --was flag provided")
 				return errors.New("please either pass version with --was flag or run inside a directory that uses a version file")
 			}
 
