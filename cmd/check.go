@@ -51,6 +51,7 @@ func NewCmdCheck() *cobra.Command {
 			}
 
 			if len(versionFiles) == 1 {
+				log.Debugf("reading current version from %s", versionFiles[0])
 				flags.Now, err = files.GetVersionFromFile(curDir, versionFiles[0])
 				if err != nil {
 					return err
@@ -58,6 +59,7 @@ func NewCmdCheck() *cobra.Command {
 			}
 
 			if currentBranch != flags.BaseBranch {
+				log.Debugf("reading previous version from %s on branch %s", versionFiles[0], flags.BaseBranch)
 				baseBranchVersion, err := git.VersionAtBranch(curDir, flags.BaseBranch, versionFiles[0])
 				if err != nil {
 					return err
