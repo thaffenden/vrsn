@@ -9,6 +9,7 @@ import (
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
 	"github.com/thaffenden/vrsn/internal/git"
+	"github.com/thaffenden/vrsn/internal/logger"
 	"github.com/thaffenden/vrsn/internal/versions"
 )
 
@@ -16,12 +17,8 @@ import (
 func NewCmdCheck() *cobra.Command {
 	cmd := &cobra.Command{
 		RunE: func(ccmd *cobra.Command, args []string) error {
-			// check for git dir
-			// if not exists and no was error
-			// if exists, and branch is not equal to main
-			// 			get files from current branch as now
-			// 			get files from main branch as was
-			// check for expected version files in directory.
+			// TODO: support color option.
+			log := logger.NewBasic(false, flags.Verbose)
 			curDir, err := os.Getwd()
 			if err != nil {
 				return err
@@ -32,8 +29,7 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			// TODO: only show this in verbose mode.
-			fmt.Printf("current branch: %s\n", currentBranch)
+			log.Debugf("current branch: %s", currentBranch)
 
 			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
 			if err != nil {
@@ -77,14 +73,14 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("was: %s\nnow: %s\n", flags.Was, flags.Now)
+			log.Infof("was: %s\nnow: %s", flags.Was, flags.Now)
 
 			err = versions.Compare(flags.Was, flags.Now)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("valid version bump\n")
+			log.Info("valid version bump")
 
 			return nil
 		},
@@ -96,5 +92,6 @@ func NewCmdCheck() *cobra.Command {
 	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "name of the base branch used when auto detecting version changes")
 	cmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
 	cmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
+	cmd.Flags().BoolVar(&flags.Verbose, "verbose", false, "get verbose output")
 	return cmd
 }
