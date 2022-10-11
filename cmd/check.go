@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
 	"github.com/thaffenden/vrsn/internal/git"
+	"github.com/thaffenden/vrsn/internal/logger"
 	"github.com/thaffenden/vrsn/internal/versions"
 )
 
@@ -16,12 +16,8 @@ import (
 func NewCmdCheck() *cobra.Command {
 	cmd := &cobra.Command{
 		RunE: func(ccmd *cobra.Command, args []string) error {
-			// check for git dir
-			// if not exists and no was error
-			// if exists, and branch is not equal to main
-			// 			get files from current branch as now
-			// 			get files from main branch as was
-			// check for expected version files in directory.
+			// TODO: support color option.
+			log := logger.NewBasic(false, flags.Verbose)
 			curDir, err := os.Getwd()
 			if err != nil {
 				return err
@@ -32,8 +28,7 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			// TODO: only show this in verbose mode.
-			fmt.Printf("current branch: %s\n", currentBranch)
+			log.Debugf("current branch: %s", currentBranch)
 
 			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
 			if err != nil {
@@ -41,20 +36,21 @@ func NewCmdCheck() *cobra.Command {
 			}
 
 			if len(versionFiles) > 1 {
-				return fmt.Errorf("looks like you have several version files: %s", versionFiles)
+				return errors.Errorf("looks like you have several version files: %s", versionFiles)
 			}
 
 			if len(versionFiles) == 0 && flags.Now == "" {
-				fmt.Println("no version files found in directory and no --now flag provided")
+				log.Info("no version files found in directory and no --now flag provided")
 				return errors.New("please either pass version with --now flag or run inside a directory that uses a version file")
 			}
 
 			if len(versionFiles) == 0 && flags.Was == "" {
-				fmt.Println("no version files found in directory and no --was flag provided")
+				log.Info("no version files found in directory and no --was flag provided")
 				return errors.New("please either pass version with --was flag or run inside a directory that uses a version file")
 			}
 
 			if len(versionFiles) == 1 {
+				log.Debugf("reading current version from %s", versionFiles[0])
 				flags.Now, err = files.GetVersionFromFile(curDir, versionFiles[0])
 				if err != nil {
 					return err
@@ -62,6 +58,7 @@ func NewCmdCheck() *cobra.Command {
 			}
 
 			if currentBranch != flags.BaseBranch {
+				log.Debugf("reading previous version from %s on branch %s", versionFiles[0], flags.BaseBranch)
 				baseBranchVersion, err := git.VersionAtBranch(curDir, flags.BaseBranch, versionFiles[0])
 				if err != nil {
 					return err
@@ -77,14 +74,15 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("was: %s\nnow: %s\n", flags.Was, flags.Now)
+			log.Infof("was: %s", flags.Was)
+			log.Infof("now: %s", flags.Now)
 
 			err = versions.Compare(flags.Was, flags.Now)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("valid version bump\n")
+			log.Info("valid version bump")
 
 			return nil
 		},
@@ -96,5 +94,6 @@ func NewCmdCheck() *cobra.Command {
 	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "name of the base branch used when auto detecting version changes")
 	cmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
 	cmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
+	cmd.Flags().BoolVar(&flags.Verbose, "verbose", false, "get verbose output")
 	return cmd
 }

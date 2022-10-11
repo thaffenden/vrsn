@@ -9,4 +9,6 @@ var (
 	Now string
 	// Was is the variable for the CLI flag --was.
 	Was string
+	// Verbose is the variable for the CLI flag --verbose to enable debug log output.
+	Verbose bool
 )
