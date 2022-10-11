@@ -75,7 +75,8 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			log.Infof("was: %s\nnow: %s", flags.Was, flags.Now)
+			log.Infof("was: %s", flags.Was)
+			log.Infof("now: %s", flags.Now)
 
 			err = versions.Compare(flags.Was, flags.Now)
 			if err != nil {
