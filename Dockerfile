@@ -4,5 +4,8 @@ RUN apk add --no-cache \
   git \
   musl-dev
 
+RUN mkdir /repo && \
+  git config --global --add safe.directory /repo
+
 COPY vrsn /
 ENTRYPOINT ["/vrsn"]
