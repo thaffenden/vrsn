@@ -28,7 +28,7 @@ push-tag:
 	@git push origin ${VERSION}
 
 .PHONY: release
-release: push-tag
+release: ghrc-login push-tag
 	@op run --env-file='./.env' -- goreleaser release --rm-dist
 
 .PHONY: test
