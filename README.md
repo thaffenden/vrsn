@@ -40,11 +40,11 @@ Get the Docker container from the
 docker pull ghcr.io/thaffenden/vrsn:latest
 ```
 
+See [Running in Docker](#running-in-docker) for more details.
+
 ### Use the CircleCI Orb
 
 TBD
-
-See [Running in Docker](## Running in Docker) for more details.
 
 ## Commands
 
