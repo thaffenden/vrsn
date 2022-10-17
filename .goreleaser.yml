@@ -9,6 +9,9 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -X "github.com/thaffenden/vrsn/cmd.Version={{.Version}}"
+
 dockers:
   - image_templates:
       - "ghcr.io/thaffenden/vrsn:{{ .Version }}"
