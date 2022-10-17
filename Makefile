@@ -18,6 +18,15 @@ fmt:
 lint:
 	@golangci-lint run -v ${DIR}
 
+.PHONY: push-tag
+push-tag:
+	@git tag -a ${VERSION}
+	@git push origin ${VERSION}
+
+.PHONY: release
+release: push-tag
+	@op run --env-file='./.env' -- goreleaser release --rm-dist
+
 .PHONY: test
 test:
 	@CGO_ENABLED=1 go test ${DIR} -race -cover
