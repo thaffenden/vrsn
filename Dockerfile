@@ -4,8 +4,11 @@ RUN apk add --no-cache \
   git \
   musl-dev
 
-RUN mkdir /repo && \
-  git config --global --add safe.directory /repo
+ENV WORKDIR=/repo
+RUN mkdir $WORKDIR && \
+  git config --global --add safe.directory $WORKDIR
+
+WORKDIR ${WORKDIR}
 
 COPY vrsn /
 ENTRYPOINT ["/vrsn"]
