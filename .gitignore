@@ -3,3 +3,5 @@ vrsn
 _null-ls*
 coverage.out
 TODO.md
+dist/
+.env

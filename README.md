@@ -26,6 +26,24 @@ project, just use `vrsn` and get on with the important stuff.
 
 ## Install
 
+### Download from GitHub
+
+Find the latest version for your system on the
+[GitHub releases page](https://github.com/thaffenden/vrsn/releases).
+
+### Run the Docker container
+
+Get the Docker container from the
+[GitHub container registry](https://github.com/thaffenden/vrsn/pkgs/container/vrsn).
+
+```bash
+docker pull ghcr.io/thaffenden/vrsn:latest
+```
+
+See [Running in Docker](#running-in-docker) for more details.
+
+### Use the CircleCI Orb
+
 TBD
 
 ## Commands
@@ -53,3 +71,19 @@ You can use the `--base-branch` flag to specify the name you use.
 ### `bump`
 
 TBD
+
+## Running in Docker
+
+To run `vrsn` in a docker container you just need to mount the repo as a
+volume, and `vrsn` can do it's thing, **however** git's
+[safe.directory](https://git-scm.com/docs/git-config/2.35.2#Documentation/git-config.txt-safedirectory)
+settings would prevent `vrsn` from being able to use it's git based smarts.
+
+To deal with this a directory called `/repo` is set as a safe directory as part
+of the Docker Build process, and is configured as the container's working
+directory so it's recommended you use that as the destination of the volume
+mount. e.g.:
+
+```bash
+docker run --rm -it -v $PWD:/repo vrsn:latest check
+```
