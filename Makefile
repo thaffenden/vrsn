@@ -14,6 +14,10 @@ build-image:
 fmt:
 	@go fmt ${DIR}
 
+.PHONY: ghrc-login
+ghcr-login:
+	@op run --env-file='./.env' -- docker login ghcr.io -u "${GITHUB_USER}" -p "${GITHUB_TOKEN}"
+
 .PHONY: lint
 lint:
 	@golangci-lint run -v ${DIR}
