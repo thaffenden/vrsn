@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: publish dev tagged orb
-          command: circleci orb publish ./.circleci/orb.yml vrsn/vrsn@dev:$CIRCLE_BRANCH --token $CIRCLECI_ORB_API_TOKEN
+          command: circleci orb publish ./.circleci/orb.yml thaffenden/vrsn@dev:$CIRCLE_BRANCH --token $CIRCLECI_ORB_API_TOKEN
 
   push-live-tagged-orb:
     executor: circleci-cli/default
@@ -32,7 +32,7 @@ jobs:
           name: publish live orb
           command: |
             VERSION=$(shell head -n 1 VERSION)
-            circleci orb publish ./.circleci/orb.yml "vrsn/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
+            circleci orb publish ./.circleci/orb.yml "thaffenden/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
 
   validate-orb:
     executor: circleci-cli/default
