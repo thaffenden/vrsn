@@ -44,7 +44,22 @@ See [Running in Docker](#running-in-docker) for more details.
 
 ### Use the CircleCI Orb
 
-TBD
+For ease of running checks in your CI this repo includes a CircleCI orb.
+Just import the orb:
+
+```yaml
+orbs:
+  vrsn: thaffenden/vrsn@volatile
+```
+
+Then use the `check-version` job in your workflow like:
+
+```yaml
+workflows:
+  build:
+    jobs:
+      - vrsn/check-version
+```
 
 ## Commands
 
