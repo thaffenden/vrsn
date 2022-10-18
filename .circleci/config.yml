@@ -14,7 +14,7 @@ parameters:
 orbs:
   circleci-cli: circleci/circleci-cli@volatile
   path-filtering: circleci/path-filtering@0.1.3
-  vrsn: thaffenden/vrsn@dev:fix/orb
+  vrsn: thaffenden/vrsn@volatile
 
 ignore-main: &ignore-main
   filters:
@@ -38,7 +38,7 @@ jobs:
       - run:
           name: publish live orb
           command: |
-            VERSION=$(shell head -n 1 VERSION)
+            VERSION=$(head -n 1 VERSION)
             circleci orb publish ./.circleci/orb.yml "thaffenden/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
 
   validate-orb:
