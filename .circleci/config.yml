@@ -51,6 +51,7 @@ workflows:
       - path-filtering/filter:
           config-path: .circleci/config.yml
           mapping: |
+            .* run-setup-workflow false
             .circleci/.* run-orb-workflow true
 
   orb-test-and-release:
