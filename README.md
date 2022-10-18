@@ -61,6 +61,11 @@ workflows:
       - vrsn/check-version
 ```
 
+For an example you can look at this repo's CircleCI config, which uses the orb.
+
+See the page in the CircleCI docs for more details on the options you can pass
+to make sure the job works for your needs.
+
 ## Commands
 
 ### `--help`
