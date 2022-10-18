@@ -1,6 +1,16 @@
 # yamllint disable rule:line-length
 version: 2.1
 
+setup: << pipeline.parameters.run-setup-workflow >>
+
+parameters:
+  run-setup-workflow:
+    default: true
+    type: boolean
+  run-orb-workflow:
+    default: false
+    type: boolean
+
 orbs:
   circleci-cli: circleci/circleci-cli@volatile
 
@@ -32,7 +42,20 @@ jobs:
           command: circleci orb validate ./.circleci/orb.yml
 
 workflows:
+  setup:
+    when:
+      and:
+        - equal: [true, << pipeline.parameters.run-setup-workflow >>]
+    jobs:
+      - path-filtering/filter:
+          config-path: .circleci/config.yml
+          mapping: |
+            .circleci/.* run-orb-workflow true
+
   orb-test-and-release:
+    when:
+      and:
+        - equal: [true, << pipeline.parameters.run-orb-workflow >>]
     jobs:
       - validate-orb
       - push-dev-tagged-orb:
