@@ -34,3 +34,4 @@ jobs:
       - run:
           name: check version bump is valid
           command: vrsn check << parameters.additional-args >>
+    working_directory: << parameters.working-directory >>
