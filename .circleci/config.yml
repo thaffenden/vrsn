@@ -14,6 +14,7 @@ parameters:
 orbs:
   circleci-cli: circleci/circleci-cli@volatile
   path-filtering: circleci/path-filtering@0.1.3
+  vrsn: thaffenden/vrsn@dev:task/circleci-orb
 
 jobs:
   push-dev-tagged-orb:
@@ -48,6 +49,7 @@ workflows:
       and:
         - equal: [true, << pipeline.parameters.run-setup-workflow >>]
     jobs:
+      - vrsn/check-version
       - path-filtering/filter:
           config-path: .circleci/config.yml
           mapping: |
