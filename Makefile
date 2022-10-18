@@ -34,3 +34,7 @@ release: ghrc-login push-tag
 .PHONY: test
 test:
 	@CGO_ENABLED=1 go test ${DIR} -race -cover
+
+.PHONY: validate-orb
+validate-orb:
+	@docker run --rm -v ${PWD}/.circleci:/repo circleci/circleci-cli:alpine orb validate /repo/orb.yml

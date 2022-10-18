@@ -1,0 +1,36 @@
+version: 2.1
+
+description: Running vrsn in CircleCI.
+
+executors:
+  vrsn:
+    docker:
+      - image: ghcr.io/thaffenden/vrsn:<< parameters.version >>
+    parameters:
+      version:
+        default: latest
+        type: string
+
+jobs:
+  check-version:
+    description: Check the version bump is a valid semver increment with vrsn.
+    parameters:
+      additional-args:
+        description: Additional arguments or flags to pass to the vrsn command.
+        default: ""
+        type: string
+      executor:
+        description: The executor to use during the check version job.
+        default: vrsn
+        type: executor
+      working-directory:
+        description: The directory the project will be checked out to.
+        default: /repo
+        type: string
+    executor: << parameters.executor >>
+    steps:
+      - checkout:
+          path: << parameters.working-directory >>
+      - run:
+          name: check version bump is valid
+          command: vrsn check << parameters.additional-args >>
