@@ -2,6 +2,10 @@ BINARY_NAME=vrsn
 DIR ?= ./...
 VERSION ?= $(shell head -n 1 VERSION)
 
+define circleci-docker
+	docker run --rm -v ${PWD}/.circleci:/repo circleci/circleci-cli:alpine 
+endef
+
 .PHONY: build
 build:
 	@GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X github.com/thaffenden/vrsn/cmd.Version=${VERSION}" -o ${BINARY_NAME}
@@ -34,3 +38,11 @@ release: ghrc-login push-tag
 .PHONY: test
 test:
 	@CGO_ENABLED=1 go test ${DIR} -race -cover
+
+.PHONY: validate-ci
+validate-ci:
+	@$(circleci-docker) config validate /repo/config.yml
+
+.PHONY: validate-orb
+validate-orb:
+	@$(circleci-docker) orb validate /repo/orb.yml

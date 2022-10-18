@@ -10,5 +10,5 @@ RUN mkdir $WORKDIR && \
 
 WORKDIR ${WORKDIR}
 
-COPY vrsn /
+COPY vrsn /usr/bin/vrsn
 ENTRYPOINT ["/vrsn"]
