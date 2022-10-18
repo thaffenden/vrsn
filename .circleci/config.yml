@@ -1,0 +1,51 @@
+# yamllint disable rule:line-length
+version: 2.1
+
+orbs:
+  circleci-cli: circleci/circleci-cli@volatile
+
+jobs:
+  push-dev-tagged-orb:
+    executor: circleci-cli/default
+    steps:
+      - checkout
+      - run:
+          name: publish dev tagged orb
+          command: circleci orb publish ./.circleci/orb.yml vrsn/vrsn@dev:$CIRCLE_BRANCH --token $CIRCLECI_ORB_API_TOKEN
+
+  push-live-tagged-orb:
+    executor: circleci-cli/default
+    steps:
+      - checkout
+      - run:
+          name: publish live orb
+          command: |
+            VERSION=$(shell head -n 1 VERSION)
+            circleci orb publish ./.circleci/orb.yml "vrsn/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
+
+  validate-orb:
+    executor: circleci-cli/default
+    steps:
+      - checkout
+      - run:
+          name: validate orb
+          command: circleci orb validate ./.circleci/orb.yml
+
+workflows:
+  orb-test-and-release:
+    jobs:
+      - validate-orb
+      - push-dev-tagged-orb:
+          filters:
+            branches:
+              ignore:
+                - master
+          requires:
+            - validate-orb
+      - push-live-tagged-orb:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - validate-orb
