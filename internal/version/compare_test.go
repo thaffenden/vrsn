@@ -1,11 +1,11 @@
-package versions_test
+package version_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/thaffenden/vrsn/internal/test"
-	"github.com/thaffenden/vrsn/internal/versions"
+	"github.com/thaffenden/vrsn/internal/version"
 )
 
 func TestCompare(t *testing.T) {
@@ -19,7 +19,7 @@ func TestCompare(t *testing.T) {
 		"ReturnsVersionNotBumpedErrorWhenVersionsAreTheSame": {
 			was:         "1.0.0",
 			now:         "1.0.0",
-			assertError: test.IsSentinelError(versions.ErrVersionNotBumped),
+			assertError: test.IsSentinelError(version.ErrVersionNotBumped),
 		},
 		"ReturnsErrorWhenWasFailsValidation": {
 			was:         "",
@@ -34,7 +34,7 @@ func TestCompare(t *testing.T) {
 		"ReturnsInvalidBumpErrorWhenNotValidSemVer": {
 			was:         "1.0.0",
 			now:         "1.0.3",
-			assertError: test.IsSentinelError(versions.ErrInvalidBump),
+			assertError: test.IsSentinelError(version.ErrInvalidBump),
 		},
 		"ReturnsNoErrorForValidPatch": {
 			was:         "1.0.0",
@@ -59,7 +59,7 @@ func TestCompare(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			err := versions.Compare(tc.was, tc.now)
+			err := version.Compare(tc.was, tc.now)
 			tc.assertError(t, err)
 		})
 	}

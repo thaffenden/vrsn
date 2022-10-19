@@ -1,9 +1,4 @@
-// Package versions contains logic for the comparison of the versions.
-package versions
-
-import (
-	"github.com/thaffenden/vrsn/internal/version"
-)
+package version
 
 // Compare compares the provided versions to see if the increase is a valid
 // semver increment.
@@ -12,12 +7,12 @@ func Compare(wasInput string, nowInput string) error {
 		return ErrVersionNotBumped
 	}
 
-	was, err := version.Validate(wasInput)
+	was, err := Parse(wasInput)
 	if err != nil {
 		return err
 	}
 
-	now, err := version.Validate(nowInput)
+	now, err := Parse(nowInput)
 	if err != nil {
 		return err
 	}

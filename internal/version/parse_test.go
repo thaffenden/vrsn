@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thaffenden/vrsn/internal/semantic"
 	"github.com/thaffenden/vrsn/internal/test"
 	"github.com/thaffenden/vrsn/internal/version"
 )
@@ -16,12 +15,12 @@ func TestValidateVersion(t *testing.T) {
 	testCases := map[string]struct {
 		input         string
 		errorExpected require.ErrorAssertionFunc
-		expected      semantic.Version
+		expected      version.SemVer
 	}{
 		"ReturnsVersionStructForValidInput": {
 			input:         "34.9.154",
 			errorExpected: require.NoError,
-			expected: semantic.Version{
+			expected: version.SemVer{
 				Major: 34,
 				Minor: 9,
 				Patch: 154,
@@ -30,27 +29,27 @@ func TestValidateVersion(t *testing.T) {
 		"ReturnsErrorIfVersionDoesNotContainSeparator": {
 			input:         "100",
 			errorExpected: test.IsSentinelError(version.ErrNoVersionParts),
-			expected:      semantic.Version{},
+			expected:      version.SemVer{},
 		},
 		"ReturnsErrorIfInputDoesNotHaveThreeParts": {
 			input:         "2.2",
 			errorExpected: test.IsSentinelError(version.ErrNumVersionParts),
-			expected:      semantic.Version{},
+			expected:      version.SemVer{},
 		},
 		"ReturnsErrorIfMajorVersionCannotBeConvertedToInt": {
 			input:         "x.1.1",
 			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
-			expected:      semantic.Version{},
+			expected:      version.SemVer{},
 		},
 		"ReturnsErrorIfMinorVersionCannotBeConvertedToInt": {
 			input:         "1.x.1",
 			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
-			expected:      semantic.Version{},
+			expected:      version.SemVer{},
 		},
 		"ReturnsErrorIfPatchVersionCannotBeConvertedToInt": {
 			input:         "1.5.x",
 			errorExpected: test.IsSentinelError(version.ErrConvertingToInt),
-			expected:      semantic.Version{},
+			expected:      version.SemVer{},
 		},
 	}
 
@@ -60,7 +59,7 @@ func TestValidateVersion(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			actual, err := version.Validate(tc.input)
+			actual, err := version.Parse(tc.input)
 			tc.errorExpected(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})
