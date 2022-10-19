@@ -93,7 +93,6 @@ func NewCmdCheck() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "name of the base branch used when auto detecting version changes")
 	cmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
-	cmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
-	cmd.Flags().BoolVar(&flags.Verbose, "verbose", false, "get verbose output")
+	cmd.PersistentFlags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
 	return cmd
 }

@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/thaffenden/vrsn/internal/flags"
 )
 
 // Version is the CLI version set via linker flags at build time.
@@ -31,4 +32,5 @@ func Execute() error {
 
 func init() {
 	rootCmd.AddCommand(NewCmdCheck())
+	rootCmd.PersistentFlags().BoolVar(&flags.Verbose, "verbose", false, "get verbose output")
 }
