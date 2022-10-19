@@ -9,7 +9,7 @@ import (
 	"github.com/thaffenden/vrsn/internal/flags"
 	"github.com/thaffenden/vrsn/internal/git"
 	"github.com/thaffenden/vrsn/internal/logger"
-	"github.com/thaffenden/vrsn/internal/versions"
+	"github.com/thaffenden/vrsn/internal/version"
 )
 
 // NewCmdCheck creates the check command.
@@ -77,7 +77,7 @@ func NewCmdCheck() *cobra.Command {
 			log.Infof("was: %s", flags.Was)
 			log.Infof("now: %s", flags.Now)
 
-			err = versions.Compare(flags.Was, flags.Now)
+			err = version.Compare(flags.Was, flags.Now)
 			if err != nil {
 				return err
 			}
@@ -93,7 +93,6 @@ func NewCmdCheck() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "name of the base branch used when auto detecting version changes")
 	cmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
-	cmd.Flags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
-	cmd.Flags().BoolVar(&flags.Verbose, "verbose", false, "get verbose output")
+	cmd.PersistentFlags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
 	return cmd
 }

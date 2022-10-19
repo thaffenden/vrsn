@@ -2,19 +2,16 @@ package files
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-type versionFunc func(*bufio.Scanner) (string, error)
-
 // GetVersionFromFile reads the version file and returns the semantic
 // version contained.
 func GetVersionFromFile(dir string, inputFile string) (string, error) {
-	extractVersionFunc, err := getVersionFunc(inputFile)
+	versionFunc, err := getVersionFunc(inputFile)
 	if err != nil {
 		return "", err
 	}
@@ -32,7 +29,7 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 
 	scanner := bufio.NewScanner(file)
 
-	version, err := extractVersionFunc(scanner)
+	version, err := versionFunc.reader(scanner)
 	if err != nil {
 		return "", err
 	}
@@ -51,44 +48,11 @@ func GetVersionFromString(fileName string, input string) (string, error) {
 	reader := strings.NewReader(input)
 	scanner := bufio.NewScanner(reader)
 
-	version, err := versionFunc(scanner)
+	version, err := versionFunc.reader(scanner)
 	if err != nil {
 		return "", err
 	}
 	return version, nil
-}
-
-// versionFileMap is a map containing the expected name of the version file
-// with the function used to extract the version from that file.
-func versionFileMap() map[string]func(*bufio.Scanner) (string, error) {
-	return map[string]func(*bufio.Scanner) (string, error){
-		"Cargo.toml":     getVersionFromTOML,
-		"package.json":   getVersionFromPackageJSON,
-		"pyproject.toml": getVersionFromTOML,
-		"VERSION":        getVersionFromVersionFile,
-	}
-}
-
-// getVersionFunc gets the relevant version function from the map or errors if
-// an unsupported version file is passed.
-func getVersionFunc(inputFile string) (versionFunc, error) {
-	extractVersionFunc, exists := versionFileMap()[inputFile]
-	if !exists {
-		return nil, fmt.Errorf("%s is not a supported version file type", inputFile)
-	}
-
-	return extractVersionFunc, nil
-}
-
-func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `version =`) {
-			return strings.Split(lineText, `"`)[1], nil
-		}
-	}
-	return "", ErrGettingVersionFromTOML
 }
 
 func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
@@ -100,6 +64,17 @@ func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	}
 
 	return "", ErrGettingVersionFromPackageJSON
+}
+
+func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `version =`) {
+			return strings.Split(lineText, `"`)[1], nil
+		}
+	}
+	return "", ErrGettingVersionFromTOML
 }
 
 func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {
