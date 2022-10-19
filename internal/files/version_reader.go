@@ -55,17 +55,6 @@ func GetVersionFromString(fileName string, input string) (string, error) {
 	return version, nil
 }
 
-func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `version =`) {
-			return strings.Split(lineText, `"`)[1], nil
-		}
-	}
-	return "", ErrGettingVersionFromTOML
-}
-
 func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	for scanner.Scan() {
 		lineText := scanner.Text()
@@ -75,6 +64,17 @@ func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	}
 
 	return "", ErrGettingVersionFromPackageJSON
+}
+
+func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `version =`) {
+			return strings.Split(lineText, `"`)[1], nil
+		}
+	}
+	return "", ErrGettingVersionFromTOML
 }
 
 func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {

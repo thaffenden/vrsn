@@ -19,10 +19,22 @@ type versionFileHandlers struct {
 // with the function used to extract the version from that file.
 func versionFileMap() map[string]versionFileHandlers {
 	return map[string]versionFileHandlers{
-		"Cargo.toml":     {reader: getVersionFromTOML},
-		"package.json":   {reader: getVersionFromPackageJSON},
-		"pyproject.toml": {reader: getVersionFromTOML},
-		"VERSION":        {reader: getVersionFromVersionFile},
+		"Cargo.toml": {
+			reader: getVersionFromTOML,
+			writer: writeVersionToTOML,
+		},
+		"package.json": {
+			reader: getVersionFromPackageJSON,
+			writer: writeVersionToPackageJSON,
+		},
+		"pyproject.toml": {
+			reader: getVersionFromTOML,
+			writer: writeVersionToTOML,
+		},
+		"VERSION": {
+			reader: getVersionFromVersionFile,
+			writer: writeVersionToVersionFile,
+		},
 	}
 }
 
