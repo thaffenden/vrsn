@@ -1,13 +1,14 @@
 package files_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/thaffenden/vrsn/internal/files"
+	"github.com/thaffenden/vrsn/internal/test"
 )
 
 func TestWriteVersionToFile(t *testing.T) {
@@ -19,7 +20,24 @@ func TestWriteVersionToFile(t *testing.T) {
 		newVersion  string
 		assertError require.ErrorAssertionFunc
 	}{
-		"": {},
+		"ReturnsErrorForUnsupportedVersionFile": {
+			parentDir:   "bump",
+			inputFile:   "foo.txt",
+			newVersion:  "",
+			assertError: require.Error,
+		},
+		"WritesVersionToCargoTOML": {
+			parentDir:   "bump",
+			inputFile:   "Cargo.toml",
+			newVersion:  "2.14.741",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidCargoTOML": {
+			parentDir:   "no-version",
+			inputFile:   "Cargo.toml",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+		},
 	}
 
 	for name, testCase := range testCases {
@@ -28,17 +46,22 @@ func TestWriteVersionToFile(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			dir := filepath.Join("testdata", "bump")
+			dir := filepath.Join("testdata", tc.parentDir)
 			err := files.WriteVersionToFile(dir, tc.inputFile, tc.newVersion)
 			tc.assertError(t, err)
 
-			expected, err := ioutil.ReadFile(filepath.Join("testdata", "all", tc.inputFile))
-			tc.assertError(t, err)
+			// Only assert the written contents if the writer func does not error.
+			if err != nil {
+				return
+			}
 
-			actual, err := ioutil.ReadFile(filepath.Join("testdata", "bump", tc.inputFile))
-			tc.assertError(t, err)
+			expected, err := os.ReadFile(filepath.Join("testdata", "all", tc.inputFile))
+			require.NoError(t, err)
 
-			assert.Equal(t, expected, actual)
+			actual, err := os.ReadFile(filepath.Clean(filepath.Join(dir, tc.inputFile)))
+			require.NoError(t, err)
+
+			assert.Equal(t, string(expected), string(actual))
 		})
 	}
 }

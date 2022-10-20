@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // WriteVersionToFile updates the version file with the provided new version
@@ -40,7 +41,16 @@ func writeVersionToPackageJSON(scanner *bufio.Scanner, version string) error {
 }
 
 func writeVersionToTOML(scanner *bufio.Scanner, version string) error {
-	return nil
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `version =`) {
+			// do write opteration here
+			return nil
+		}
+	}
+
+	return ErrGettingVersionFromTOML
 }
 
 func writeVersionToVersionFile(scanner *bufio.Scanner, version string) error {
