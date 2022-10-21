@@ -6,13 +6,15 @@ import (
 )
 
 type (
-	readerFunc func(*bufio.Scanner) (string, error)
-	writerFunc func(*bufio.Scanner, string) error
+	readerFunc  func(*bufio.Scanner) (string, error)
+	updaterFunc func(*bufio.Scanner, string) ([]string, error)
+	writerFunc  func(*bufio.Scanner, string) error
 )
 
 type versionFileHandlers struct {
-	reader readerFunc
-	writer writerFunc
+	reader  readerFunc
+	updater updaterFunc
+	writer  writerFunc
 }
 
 // versionFileMap is a map containing the expected name of the version file
@@ -20,8 +22,9 @@ type versionFileHandlers struct {
 func versionFileMap() map[string]versionFileHandlers {
 	return map[string]versionFileHandlers{
 		"Cargo.toml": {
-			reader: getVersionFromTOML,
-			writer: writeVersionToTOML,
+			reader:  getVersionFromTOML,
+			updater: updateVersionInTOML,
+			writer:  writeVersionToTOML,
 		},
 		"package.json": {
 			reader: getVersionFromPackageJSON,

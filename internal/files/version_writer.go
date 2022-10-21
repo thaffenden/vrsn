@@ -2,9 +2,11 @@ package files
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -29,9 +31,24 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 
 	scanner := bufio.NewScanner(file)
 
-	if err := versionFunc.writer(scanner, newVersion); err != nil {
+	newContents, err := versionFunc.updater(scanner, newVersion)
+	if err != nil {
 		return err
 	}
+
+	tmpFile, err := os.Open(filepath.Clean(filepath.Join(dir, fmt.Sprintf("tmp_%s", inputFile))))
+	if err != nil {
+		return err
+	}
+
+	for _, line := range newContents {
+		if _, err := tmpFile.WriteString(line); err != nil {
+			return err
+		}
+	}
+
+	// overwrite real file with tmp file
+	// remove tmp file
 
 	return nil
 }
@@ -55,4 +72,28 @@ func writeVersionToTOML(scanner *bufio.Scanner, version string) error {
 
 func writeVersionToVersionFile(scanner *bufio.Scanner, version string) error {
 	return nil
+}
+
+func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	foundVersion := false
+	allLines := []string{}
+
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `version =`) {
+			re := regexp.MustCompile(`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`)
+			newVersionLine := re.ReplaceAllString(`version = "2.5.0"`, `${1}${2}3.0.0${4}`)
+			allLines = append(allLines, newVersionLine)
+			continue
+		}
+
+		allLines = append(allLines, lineText)
+	}
+
+	if !foundVersion {
+		return []string{}, ErrGettingVersionFromTOML
+	}
+
+	return allLines, nil
 }
