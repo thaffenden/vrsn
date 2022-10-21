@@ -2,6 +2,7 @@
 package version
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -47,4 +48,24 @@ func Parse(version string) (SemVer, error) {
 		Minor: minor,
 		Patch: patch,
 	}, nil
+}
+
+// MajorBump increments the major version by 1.
+func (s *SemVer) MajorBump() {
+	s.Major++
+}
+
+// MinorBump increments the minor version by 1.
+func (s *SemVer) MinorBump() {
+	s.Minor++
+}
+
+// PatchBump increments the patch version by 1.
+func (s *SemVer) PatchBump() {
+	s.Patch++
+}
+
+// ToString returns the string representation of a SemVer struct.
+func (s SemVer) ToString() string {
+	return fmt.Sprintf("%d.%d.%d", s.Major, s.Minor, s.Patch)
 }
