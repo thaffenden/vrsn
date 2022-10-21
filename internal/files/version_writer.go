@@ -43,11 +43,11 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 
 	defer func() {
 		if err := tmpFile.Close(); err != nil {
-			log.Fatal("error closing temp file while bumping version")
+			log.Fatalf("error closing temp file while bumping version: %s", err)
 		}
 
 		if err := os.Remove(tmpFile.Name()); err != nil {
-			log.Fatal("error removing temporary file while bumping version")
+			log.Fatalf("error removing temporary file while bumping version: %s", err)
 		}
 	}()
 
