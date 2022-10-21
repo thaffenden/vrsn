@@ -22,6 +22,10 @@ fmt:
 ghcr-login:
 	@op run --env-file='./.env' -- docker login ghcr.io -u "${GITHUB_USER}" -p "${GITHUB_TOKEN}"
 
+.PHONY: install
+install: build
+	@sudo cp ./${BINARY_NAME} /usr/bin/${BINARY_NAME}
+
 .PHONY: lint
 lint:
 	@golangci-lint run -v ${DIR}
