@@ -90,7 +90,19 @@ You can use the `--base-branch` flag to specify the name you use.
 
 ### `bump`
 
-TBD
+Run `vrsn bump` to increment the current version file.
+It will prompt you to select the bump type and then write the new valid semver
+version in your version file.
+
+**Coming soon:** flags so you can avoid the picker.
+Just run `vrsn bump --patch` to increment a patch version.
+
+**Coming soon:** auto commit your version bump.
+Just run `vrsn bump --commit` to automatically commit your version bump so you
+don't need to do anything once the file is bumped.
+
+Customise the commit message with the `--commit-msg` flag if you don't like the
+default.
 
 ## Running in Docker
 
