@@ -2,7 +2,6 @@ package files
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,7 +24,7 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 
 	defer func() {
 		if err := file.Close(); err != nil {
-			log.Fatalf("error closing file: %s", inputFile)
+			log.Fatalf("error closing file: %s\n%s", inputFile, err)
 		}
 	}()
 
@@ -36,10 +35,20 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 		return err
 	}
 
-	tmpFile, err := os.Open(filepath.Clean(filepath.Join(dir, fmt.Sprintf("tmp_%s", inputFile))))
+	tmpFile, err := os.CreateTemp(dir, "vrsn*")
 	if err != nil {
 		return err
 	}
+
+	defer func() {
+		if err := tmpFile.Close(); err != nil {
+			log.Fatal("error closing temp file while bumping version")
+		}
+
+		if err := os.Remove(tmpFile.Name()); err != nil {
+			log.Fatal("error removing temporary file while bumping version")
+		}
+	}()
 
 	for _, line := range newContents {
 		if _, err := tmpFile.WriteString(line); err != nil {
@@ -47,8 +56,9 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 		}
 	}
 
-	// overwrite real file with tmp file
-	// remove tmp file
+	if err := os.Rename(tmpFile.Name(), file.Name()); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -85,6 +95,7 @@ func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, e
 			re := regexp.MustCompile(`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`)
 			newVersionLine := re.ReplaceAllString(`version = "2.5.0"`, `${1}${2}3.0.0${4}`)
 			allLines = append(allLines, newVersionLine)
+			foundVersion = true
 			continue
 		}
 
