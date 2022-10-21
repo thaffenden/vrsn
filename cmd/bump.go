@@ -8,6 +8,7 @@ import (
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
 	"github.com/thaffenden/vrsn/internal/logger"
+	"github.com/thaffenden/vrsn/internal/prompt"
 )
 
 // NewCmdBump creates the bump command.
@@ -34,13 +35,18 @@ func NewCmdBump() *cobra.Command {
 				return errors.New("no version file found in directory")
 			}
 
-			// prompt user to select bump type
-			// TODO: support passing bump type through flag
-			// when version selected, get current version
-			// increment by specified version
+			currentVersion, err := files.GetVersionFromFile(curDir, versionFiles[0])
+			if err != nil {
+				return err
+			}
 
-			currentVersion := "0.9.0"
-			newVersion := "1.0.0"
+			// TODO: support passing bump type through flag
+			newVersion, err := prompt.SelectBumpType(currentVersion)
+			if err != nil {
+				return err
+			}
+
+			// increment by specified version
 			log.Infof("version bumped from %s to %s", currentVersion, newVersion)
 
 			return nil
