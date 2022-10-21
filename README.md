@@ -4,6 +4,13 @@ A single tool for your semantic versioning needs.
 
 ![vrsn-demo](https://user-images.githubusercontent.com/14163530/197282114-5b6bfc56-2154-4213-ba77-438b53233b3c.gif)
 
+## Contents
+
+- [Why](#why)
+- [Install](#install)
+- [Commands](#commands)
+- [Running in Docker](#running-in-docker)
+
 ## Why?
 
 ### Language agnotistic
