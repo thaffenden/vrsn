@@ -37,8 +37,9 @@ func versionFileMap() map[string]versionFileHandlers {
 			writer:  writeVersionToTOML,
 		},
 		"VERSION": {
-			reader: getVersionFromVersionFile,
-			writer: writeVersionToVersionFile,
+			reader:  getVersionFromVersionFile,
+			updater: updateVersionInVERSIONFile,
+			writer:  writeVersionToVersionFile,
 		},
 	}
 }

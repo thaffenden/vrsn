@@ -62,6 +62,12 @@ func TestWriteVersionToFile(t *testing.T) {
 			newVersion:  "",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 		},
+		"WritesVersionToVERSIONFile": {
+			parentDir:   "bump",
+			inputFile:   "VERSION",
+			newVersion:  "6.6.6",
+			assertError: require.NoError,
+		},
 	}
 
 	for name, testCase := range testCases {

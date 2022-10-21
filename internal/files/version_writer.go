@@ -130,3 +130,7 @@ func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, e
 
 	return allLines, nil
 }
+
+func updateVersionInVERSIONFile(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	return []string{newVersion}, nil
+}
