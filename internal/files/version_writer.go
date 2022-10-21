@@ -36,18 +36,18 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 		return err
 	}
 
-	tmpFile, err := os.CreateTemp(dir, "vrsn*")
+	tmpFile, err := os.CreateTemp(dir, "vrsn-tmp-*")
 	if err != nil {
 		return err
 	}
 
 	defer func() {
 		if err := tmpFile.Close(); err != nil {
-			log.Fatalf("error closing temp file while bumping version: %s", err)
+			log.Fatalf("error closing temp file while bumping version: %s\n", err)
 		}
 
 		if err := os.Remove(tmpFile.Name()); err != nil {
-			log.Fatalf("error removing temporary file while bumping version: %s", err)
+			log.Fatalf("error removing temporary file while bumping version: %s\n", err)
 		}
 	}()
 
