@@ -2,6 +2,7 @@ package files
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -51,7 +52,7 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 	}()
 
 	for _, line := range newContents {
-		if _, err := tmpFile.WriteString(line); err != nil {
+		if _, err := tmpFile.WriteString(fmt.Sprintf("%s\n", line)); err != nil {
 			return err
 		}
 	}
