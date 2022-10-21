@@ -60,27 +60,6 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 	return nil
 }
 
-func writeVersionToPackageJSON(scanner *bufio.Scanner, version string) error {
-	return nil
-}
-
-func writeVersionToTOML(scanner *bufio.Scanner, version string) error {
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `version =`) {
-			// do write opteration here
-			return nil
-		}
-	}
-
-	return ErrGettingVersionFromTOML
-}
-
-func writeVersionToVersionFile(scanner *bufio.Scanner, version string) error {
-	return nil
-}
-
 func updateVersionInPackageJSON(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	foundVersion := false
 	allLines := []string{}
