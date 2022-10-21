@@ -14,20 +14,20 @@ func TestGetBumpOptions(t *testing.T) {
 	testCases := map[string]struct {
 		version     string
 		assertError require.ErrorAssertionFunc
-		expected    map[string]string
+		expected    version.BumpOptions
 	}{
 		"ReturnsErrorForInvalidVersionString": {
 			version:     "foo",
 			assertError: require.Error,
-			expected:    map[string]string{},
+			expected:    version.BumpOptions{},
 		},
 		"ReturnsIncrementedVersionsForValidInput": {
 			version:     "1.0.0",
 			assertError: require.NoError,
-			expected: map[string]string{
-				"major": "2.0.0",
-				"minor": "1.1.0",
-				"patch": "1.0.1",
+			expected: version.BumpOptions{
+				Major: "2.0.0",
+				Minor: "1.1.0",
+				Patch: "1.0.1",
 			},
 		},
 	}

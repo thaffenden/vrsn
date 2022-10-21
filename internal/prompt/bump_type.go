@@ -4,7 +4,6 @@ package prompt
 import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/thaffenden/vrsn/internal/version"
-	"golang.org/x/exp/maps"
 )
 
 // SelectBumpType prompts the user to select the type of version increment they
@@ -24,7 +23,7 @@ func SelectBumpType(currentVersion string) (string, error) {
 			Name: "bump",
 			Prompt: &survey.Select{
 				Message: "select version bump type:",
-				Options: maps.Values(versionOptions),
+				Options: versionOptions.PromptOptions(),
 			},
 		},
 	}, &answer)
@@ -32,5 +31,5 @@ func SelectBumpType(currentVersion string) (string, error) {
 		return "", err
 	}
 
-	return answer.Selected, nil
+	return versionOptions.SelectedIncrement(answer.Selected), nil
 }
