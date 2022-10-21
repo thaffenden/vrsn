@@ -61,55 +61,50 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 }
 
 func updateVersionInPackageJSON(scanner *bufio.Scanner, newVersion string) ([]string, error) {
-	foundVersion := false
-	allLines := []string{}
-
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `"version": "`) {
-			re := regexp.MustCompile(`(.*)("version": *"){1}(\d+.\d+.\d+)(".*)`)
-			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
-			allLines = append(allLines, newVersionLine)
-			foundVersion = true
-			continue
-		}
-
-		allLines = append(allLines, lineText)
-	}
-
-	if !foundVersion {
-		return []string{}, ErrGettingVersionFromPackageJSON
-	}
-
-	return allLines, nil
+	return updateVersionInFile(
+		scanner,
+		`"version": "`,
+		`(.*)("version": *"){1}(\d+.\d+.\d+)(".*)`,
+		newVersion,
+		ErrGettingVersionFromPackageJSON,
+	)
 }
 
 func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, error) {
-	foundVersion := false
-	allLines := []string{}
-
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `version =`) {
-			re := regexp.MustCompile(`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`)
-			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
-			allLines = append(allLines, newVersionLine)
-			foundVersion = true
-			continue
-		}
-
-		allLines = append(allLines, lineText)
-	}
-
-	if !foundVersion {
-		return []string{}, ErrGettingVersionFromTOML
-	}
-
-	return allLines, nil
+	return updateVersionInFile(
+		scanner,
+		`version =`,
+		`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`,
+		newVersion,
+		ErrGettingVersionFromTOML,
+	)
 }
 
 func updateVersionInVERSIONFile(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	return []string{newVersion}, nil
+}
+
+func updateVersionInFile(scanner *bufio.Scanner, versionLine string, regexMatcher string, newVersion string, errorType error) ([]string, error) {
+	foundVersion := false
+	allLines := []string{}
+
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, versionLine) {
+			re := regexp.MustCompile(regexMatcher)
+			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
+			allLines = append(allLines, newVersionLine)
+			foundVersion = true
+			continue
+		}
+
+		allLines = append(allLines, lineText)
+	}
+
+	if !foundVersion {
+		return []string{}, errorType
+	}
+
+	return allLines, nil
 }
