@@ -46,7 +46,10 @@ func NewCmdBump() *cobra.Command {
 				return err
 			}
 
-			// increment by specified version
+			if err := files.WriteVersionToFile(curDir, versionFiles[0], newVersion); err != nil {
+				return err
+			}
+
 			log.Infof("version bumped from %s to %s", currentVersion, newVersion)
 
 			return nil

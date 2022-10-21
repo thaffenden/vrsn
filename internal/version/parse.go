@@ -53,11 +53,14 @@ func Parse(version string) (SemVer, error) {
 // MajorBump increments the major version by 1.
 func (s *SemVer) MajorBump() {
 	s.Major++
+	s.Minor = 0
+	s.Patch = 0
 }
 
 // MinorBump increments the minor version by 1.
 func (s *SemVer) MinorBump() {
 	s.Minor++
+	s.Patch = 0
 }
 
 // PatchBump increments the patch version by 1.
