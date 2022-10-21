@@ -14,20 +14,23 @@ changes are inline with the repo's code standards.
 ## Adding support for a new version file type
 
 Supported version file types are stored in the `versionFileMap()` function in
-`internal/files/get_version.go`.
+`internal/files/version.go`.
 
-This function maps the version file name to the function used to get the
-version value from the file.
+This function maps the version file name to the functions used to read and
+update the version value from the file.
 
-All version funcs should accept an instance of `*bufio.Scanner` and return the
-version as a string or an error if the line with the version in cannot be
-found.
+All version readers and updaters should use the same function signatures
+as currently defined.
+
+To ensure only the version line is changed in the version files, the
+`updateVersionInFile` function uses a regex expression to replace just the
+semantic version in place an not touch any other lines.
 
 ### Adding unit tests
 
 Unit tests are essential to keep everything working properly as the code
-changes. `internal/files/get_version_test.go` contains tests for every
-supported file type.
+changes. `internal/files/version_(reader|writer)_test.go` contains tests for
+every supported file type.
 If you are adding a new one you should add a valid example of that file type
 to the `internal/files/testdata/all` directory and an example that does not
 include the version to `internal/files/testdata/no-version`.

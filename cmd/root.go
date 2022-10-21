@@ -32,5 +32,6 @@ func Execute() error {
 
 func init() {
 	rootCmd.AddCommand(NewCmdCheck())
+	rootCmd.AddCommand(NewCmdBump())
 	rootCmd.PersistentFlags().BoolVar(&flags.Verbose, "verbose", false, "display verbose output for more detail on what the command is doing")
 }

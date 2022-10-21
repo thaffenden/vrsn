@@ -9,7 +9,7 @@ import (
 	"github.com/thaffenden/vrsn/internal/version"
 )
 
-func TestValidateVersion(t *testing.T) {
+func TestParse(t *testing.T) {
 	t.Parallel()
 
 	testCases := map[string]struct {
