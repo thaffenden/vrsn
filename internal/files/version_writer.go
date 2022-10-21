@@ -94,7 +94,7 @@ func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, e
 
 		if strings.Contains(lineText, `version =`) {
 			re := regexp.MustCompile(`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`)
-			newVersionLine := re.ReplaceAllString(`version = "2.5.0"`, `${1}${2}3.0.0${4}`)
+			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
 			allLines = append(allLines, newVersionLine)
 			foundVersion = true
 			continue
