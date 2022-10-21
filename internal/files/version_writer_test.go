@@ -38,6 +38,18 @@ func TestWriteVersionToFile(t *testing.T) {
 			newVersion:  "",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 		},
+		"WritesVersionToPackageJSON": {
+			parentDir:   "bump",
+			inputFile:   "package.json",
+			newVersion:  "1.0.4",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidPackageJSON": {
+			parentDir:   "no-version",
+			inputFile:   "package.json",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromPackageJSON),
+		},
 	}
 
 	for name, testCase := range testCases {

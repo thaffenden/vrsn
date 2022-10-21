@@ -81,6 +81,31 @@ func writeVersionToVersionFile(scanner *bufio.Scanner, version string) error {
 	return nil
 }
 
+func updateVersionInPackageJSON(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	foundVersion := false
+	allLines := []string{}
+
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if strings.Contains(lineText, `"version": "`) {
+			re := regexp.MustCompile(`(.*)("version": *"){1}(\d+.\d+.\d+)(".*)`)
+			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
+			allLines = append(allLines, newVersionLine)
+			foundVersion = true
+			continue
+		}
+
+		allLines = append(allLines, lineText)
+	}
+
+	if !foundVersion {
+		return []string{}, ErrGettingVersionFromPackageJSON
+	}
+
+	return allLines, nil
+}
+
 func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	foundVersion := false
 	allLines := []string{}

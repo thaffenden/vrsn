@@ -27,8 +27,9 @@ func versionFileMap() map[string]versionFileHandlers {
 			writer:  writeVersionToTOML,
 		},
 		"package.json": {
-			reader: getVersionFromPackageJSON,
-			writer: writeVersionToPackageJSON,
+			reader:  getVersionFromPackageJSON,
+			updater: updateVersionInPackageJSON,
+			writer:  writeVersionToPackageJSON,
 		},
 		"pyproject.toml": {
 			reader: getVersionFromTOML,
