@@ -2,27 +2,49 @@
 
 A single tool for your semantic versioning needs.
 
+![vrsn-demo](https://user-images.githubusercontent.com/14163530/197282114-5b6bfc56-2154-4213-ba77-438b53233b3c.gif)
+
+## Contents
+
+- [Why](#why)
+- [Install](#install)
+  - [Download from GitHub](#download-from-github)
+  - [Build it locally](#build-it-locally)
+  - [Run the Docker container](#run-the-docker-container)
+  - [Use the CircleCI orb](#use-the-circleci-orb)
+- [Commands](#commands)
+- [Running in Docker](#running-in-docker)
+
 ## Why?
 
-### Language agnotistic
+### Language agnostic
 
 You can run `vrsn` in a project in any (supported) language and it will work.
 
 Currently supported version files:
 
-- `Cargo.toml` - rust
-- `package.json` - javascript, typescript
-- `pyproject.toml` - python
-- `VERSION` - go, python, various others etc
+| File | Languages |
+| --- | --- |
+| `Cargo.toml` | ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white) |
+| `package.json` | ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) |
+| `pyproject.toml` | ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) |
+| `VERSION` | ![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white) + more |
 
 Don't see your favourite version file type in that list?
-
 See the [CONTRIBUTING guide](./.github/CONTRIBUTING.md) for how to (easily) add
 support!
 
 If you're the type of person that jumps between projects in different languages
-you don't need to remeber the `yarn` or `poetry` commands for each different
+you don't need to remember the `yarn` or `poetry` commands for each different
 project, just use `vrsn` and get on with the important stuff.
+
+### Simple CI checks
+
+Ensuring you properly version releases is important.
+
+I've had to write semantic version checks in CI pipelines in different ways for
+different languages in different roles. Now I can just use `vrsn` and not have
+to worry about solving the same problems again.
 
 ## Install
 
@@ -41,6 +63,17 @@ docker pull ghcr.io/thaffenden/vrsn:latest
 ```
 
 See [Running in Docker](#running-in-docker) for more details.
+
+### Build it locally
+
+If you have go installed, you can clone this repo and run:
+
+```bash
+make install
+```
+
+This will build the binary and then copy it to `/usr/bin/vrsn` so it will be
+available on your path. Nothing more to it.
 
 ### Use the CircleCI Orb
 
@@ -75,7 +108,7 @@ Run `vrsn --help` for a full up to date usage guide to get started or
 
 ### `check`
 
-Run `vrsn check` to automatically check versions on an existsing git branch.
+Run `vrsn check` to automatically check versions on an existing git branch.
 
 By default the `check` command can tell if you are on a branch that is not
 the base branch (i.e. `main`) and will compare the version file on your current
@@ -87,6 +120,14 @@ bumped or not.
 
 Name your base branch something other than `main`?
 You can use the `--base-branch` flag to specify the name you use.
+
+Want to run it from somewhere other than the root of your git repo? You can
+use the `--was` and `--now` flags to pass in values from wherever you need to
+grab them:
+
+```bash
+vrsn check --was $(<function to get previous value>) --now $(<function to get current value>)
+```
 
 ### `bump`
 
@@ -109,10 +150,10 @@ default.
 To run `vrsn` in a docker container you just need to mount the repo as a
 volume, and `vrsn` can do it's thing, **however** git's
 [safe.directory](https://git-scm.com/docs/git-config/2.35.2#Documentation/git-config.txt-safedirectory)
-settings would prevent `vrsn` from being able to use it's git based smarts.
+settings would prevent `vrsn` from being able to use it's git based smarts 🧠.
 
 To deal with this a directory called `/repo` is set as a safe directory as part
-of the Docker Build process, and is configured as the container's working
+of the Docker build process, and is configured as the container's working
 directory so it's recommended you use that as the destination of the volume
 mount. e.g.:
 
