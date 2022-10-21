@@ -50,6 +50,18 @@ func TestWriteVersionToFile(t *testing.T) {
 			newVersion:  "",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromPackageJSON),
 		},
+		"WritesVersionToPyProjectTOML": {
+			parentDir:   "bump",
+			inputFile:   "pyproject.toml",
+			newVersion:  "9.8.123456",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidPyProjectTOML": {
+			parentDir:   "no-version",
+			inputFile:   "pyproject.toml",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+		},
 	}
 
 	for name, testCase := range testCases {
