@@ -66,6 +66,10 @@ func TestWriteVersionToFile(t *testing.T) {
 
 		// Revert the bumped file back to what we expect it to be.
 		t.Cleanup(func() {
+			if tc.newVersion == "" {
+				return
+			}
+
 			originalValues, err := os.ReadFile(filepath.Join("testdata", "bump-og", tc.inputFile))
 			require.NoError(t, err)
 
