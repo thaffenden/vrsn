@@ -67,7 +67,7 @@ func getVersionMatcher(inputFile string) (versionFileMatcher, error) {
 	return matcher, nil
 }
 
-func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
+func (v versionFileMatcher) getVersion(scanner *bufio.Scanner) (string, error) {
 	for scanner.Scan() {
 		lineText := scanner.Text()
 
@@ -94,7 +94,7 @@ func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
 	return "", v.notFoundError
 }
 
-func (v versionFileMatcher) UpdateVersionInPlace(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+func (v versionFileMatcher) updateVersionInPlace(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	foundVersion := false
 	allLines := []string{}
 

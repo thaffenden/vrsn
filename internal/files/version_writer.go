@@ -29,7 +29,7 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 
 	scanner := bufio.NewScanner(file)
 
-	newContents, err := matcher.UpdateVersionInPlace(scanner, newVersion)
+	newContents, err := matcher.updateVersionInPlace(scanner, newVersion)
 	if err != nil {
 		return err
 	}

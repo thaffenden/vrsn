@@ -29,7 +29,7 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 
 	scanner := bufio.NewScanner(file)
 
-	version, err := matcher.GetVersion(scanner)
+	version, err := matcher.getVersion(scanner)
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +48,7 @@ func GetVersionFromString(fileName string, input string) (string, error) {
 	reader := strings.NewReader(input)
 	scanner := bufio.NewScanner(reader)
 
-	version, err := matcher.GetVersion(scanner)
+	version, err := matcher.getVersion(scanner)
 	if err != nil {
 		return "", err
 	}
