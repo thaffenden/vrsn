@@ -38,6 +38,18 @@ func TestWriteVersionToFile(t *testing.T) {
 			newVersion:  "",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 		},
+		"WritesVersionToCMakeLists": {
+			parentDir:   "bump",
+			inputFile:   "CMakeLists.txt",
+			newVersion:  "1.3.0",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidCMakeLists": {
+			parentDir:   "no-version",
+			inputFile:   "CMakeLists.txt",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromCMakeLists),
+		},
 		"WritesVersionToPackageJSON": {
 			parentDir:   "bump",
 			inputFile:   "package.json",

@@ -23,6 +23,10 @@ func versionFileMap() map[string]versionFileHandlers {
 			reader:  getVersionFromTOML,
 			updater: updateVersionInTOML,
 		},
+		"CMakeLists.txt": {
+			reader:  getVersionFromCMakeLists,
+			updater: updateVersionInCMakeLists,
+		},
 		"package.json": {
 			reader:  getVersionFromPackageJSON,
 			updater: updateVersionInPackageJSON,

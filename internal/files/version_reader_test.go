@@ -38,6 +38,18 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 			expected:    "",
 		},
+		"ReturnsVersionFromCMakeLists": {
+			parentDir:   "all",
+			inputFile:   "CMakeLists.txt",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidCMakeLists": {
+			parentDir:   "no-version",
+			inputFile:   "CMakeLists.txt",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromCMakeLists),
+			expected:    "",
+		},
 		"ReturnsVersionFromPackageJSON": {
 			parentDir:   "all",
 			inputFile:   "package.json",

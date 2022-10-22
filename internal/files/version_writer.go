@@ -60,6 +60,16 @@ func WriteVersionToFile(dir string, inputFile string, newVersion string) error {
 	return nil
 }
 
+func updateVersionInCMakeLists(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	return updateVersionInFile(
+		scanner,
+		"project(",
+		`(project\(.*)(VERSION ){1}(\d+.\d+.\d+)(.*\))`,
+		newVersion,
+		ErrGettingVersionFromCMakeLists,
+	)
+}
+
 func updateVersionInPackageJSON(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	return updateVersionInFile(
 		scanner,
@@ -73,7 +83,7 @@ func updateVersionInPackageJSON(scanner *bufio.Scanner, newVersion string) ([]st
 func updateVersionInTOML(scanner *bufio.Scanner, newVersion string) ([]string, error) {
 	return updateVersionInFile(
 		scanner,
-		`version =`,
+		"version =",
 		`(.*)(version = "){1}(\d+.\d+.\d+)(".*)`,
 		newVersion,
 		ErrGettingVersionFromTOML,

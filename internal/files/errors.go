@@ -6,6 +6,9 @@ type Error uint
 const (
 	// ErrNoVersionFilesInDir is the error when no version files are found.
 	ErrNoVersionFilesInDir Error = iota
+	// ErrGettingVersionFromCMakeLists is the error when the version can't be
+	// found inside a CMakeLists.txt file.
+	ErrGettingVersionFromCMakeLists
 	// ErrGettingVersionFromPackageJSON is the error when a version key can't be
 	// found inside a package.json file.
 	ErrGettingVersionFromPackageJSON
@@ -21,6 +24,9 @@ func (e Error) Error() string {
 	switch e {
 	case ErrNoVersionFilesInDir:
 		return "no version files found in directory"
+
+	case ErrGettingVersionFromCMakeLists:
+		return "error getting version from CMakeLists.txt"
 
 	case ErrGettingVersionFromPackageJSON:
 		return "error getting version from package.json"

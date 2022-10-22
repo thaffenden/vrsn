@@ -55,6 +55,18 @@ func GetVersionFromString(fileName string, input string) (string, error) {
 	return version, nil
 }
 
+func getVersionFromCMakeLists(scanner *bufio.Scanner) (string, error) {
+	for scanner.Scan() {
+		lineText := scanner.Text()
+		if strings.Contains(lineText, "project(") {
+			chunk := strings.Split(lineText, "VERSION ")[1]
+			return strings.Split(chunk, " ")[0], nil
+		}
+	}
+
+	return "", ErrGettingVersionFromCMakeLists
+}
+
 func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
 	for scanner.Scan() {
 		lineText := scanner.Text()
