@@ -34,5 +34,5 @@ func GetVersionFilesInDirectory(dir string) ([]string, error) {
 }
 
 func supportedVersionFiles() []string {
-	return maps.Keys(versionFileMap())
+	return maps.Keys(versionFileMatchers())
 }

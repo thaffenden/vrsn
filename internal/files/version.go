@@ -7,72 +7,15 @@ import (
 	"strings"
 )
 
-type (
-	readerFunc  func(*bufio.Scanner) (string, error)
-	updaterFunc func(*bufio.Scanner, string) ([]string, error)
-)
-
-type versionFileHandlers struct {
-	reader  readerFunc
-	updater updaterFunc
-}
-
-// versionFileMap is a map containing the expected name of the version file
-// with the function used to extract the version from that file.
-func versionFileMap() map[string]versionFileHandlers {
-	return map[string]versionFileHandlers{
-		"Cargo.toml": {
-			reader:  getVersionFromTOML,
-			updater: updateVersionInTOML,
-		},
-		"CMakeLists.txt": {
-			reader:  getVersionFromCMakeLists,
-			updater: updateVersionInCMakeLists,
-		},
-		"package.json": {
-			reader:  getVersionFromPackageJSON,
-			updater: updateVersionInPackageJSON,
-		},
-		"pyproject.toml": {
-			reader:  getVersionFromTOML,
-			updater: updateVersionInTOML,
-		},
-		"VERSION": {
-			reader:  getVersionFromVersionFile,
-			updater: updateVersionInVERSIONFile,
-		},
-	}
-}
-
-// getVersionFunc gets the relevant version function from the map or errors if
-// an unsupported version file is passed.
-func getVersionFunc(inputFile string) (versionFileHandlers, error) {
-	extractVersionFunc, exists := versionFileMap()[inputFile]
-	if !exists {
-		return versionFileHandlers{}, fmt.Errorf("%s is not a supported version file type", inputFile)
-	}
-
-	return extractVersionFunc, nil
-}
-
 type versionFileMatcher struct {
 	lineMatcher   func(string) bool
 	versionRegex  string
 	notFoundError error
 }
 
-func getVersionMatcher(inputFile string) (versionFileMatcher, error) {
-	matcher, exists := VersionFileMatchers()[inputFile]
-	if !exists {
-		return versionFileMatcher{}, fmt.Errorf("%s is not a supported version file type", inputFile)
-	}
-
-	return matcher, nil
-}
-
-// VersionFileMatchers contains the utilies to extract and update the version
+// versionFileMatchers contains the utilies to extract and update the version
 // from the version file.
-func VersionFileMatchers() map[string]versionFileMatcher {
+func versionFileMatchers() map[string]versionFileMatcher {
 	return map[string]versionFileMatcher{
 		"Cargo.toml": {
 			lineMatcher: func(line string) bool {
@@ -88,7 +31,40 @@ func VersionFileMatchers() map[string]versionFileMatcher {
 			versionRegex:  `(project\(.*)(VERSION ){1}(?P<semver>\d+.\d+.\d+)(.*\))`,
 			notFoundError: ErrGettingVersionFromCMakeLists,
 		},
+		"package.json": {
+			lineMatcher: func(line string) bool {
+				return strings.Contains(line, `"version": "`)
+			},
+			versionRegex:  `(.*)("version": *"){1}(?P<semver>\d+.\d+.\d+)(".*)`,
+			notFoundError: ErrGettingVersionFromPackageJSON,
+		},
+		"pyproject.toml": {
+			lineMatcher: func(line string) bool {
+				return strings.Contains(line, "version =")
+			},
+			versionRegex:  `(.*)(version = "){1}(?P<semver>\d+.\d+.\d+)(".*)`,
+			notFoundError: ErrGettingVersionFromTOML,
+		},
+		"VERSION": {
+			lineMatcher: func(line string) bool {
+				// single line file so nothing to match on.
+				return true
+			},
+			versionRegex:  `(.*)(.*)(?P<semver>\d+.\d+.\d+)(.*)`,
+			notFoundError: ErrGettingVersionFromVERSION,
+		},
 	}
+}
+
+// getVersionMatcher gets the relevant versionFileMatcher config for the
+// provided input file or errors if there is no config for a file with that name.
+func getVersionMatcher(inputFile string) (versionFileMatcher, error) {
+	matcher, exists := versionFileMatchers()[inputFile]
+	if !exists {
+		return versionFileMatcher{}, fmt.Errorf("%s is not a supported version file type", inputFile)
+	}
+
+	return matcher, nil
 }
 
 func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
@@ -106,11 +82,7 @@ func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
 				}
 			}
 
-			fmt.Println(result)
-
 			semver, exists := result["semver"]
-
-			fmt.Printf("SEMVER: %s ||| %v", semver, exists)
 			if !exists {
 				return "", v.notFoundError
 			}

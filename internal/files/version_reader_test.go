@@ -50,42 +50,42 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromCMakeLists),
 			expected:    "",
 		},
-		// "ReturnsVersionFromPackageJSON": {
-		// 	parentDir:   "all",
-		// 	inputFile:   "package.json",
-		// 	assertError: require.NoError,
-		// 	expected:    "1.0.4",
-		// },
-		// "ReturnsErrorFromInvalidPackageJSON": {
-		// 	parentDir:   "no-version",
-		// 	inputFile:   "package.json",
-		// 	assertError: test.IsSentinelError(files.ErrGettingVersionFromPackageJSON),
-		// 	expected:    "",
-		// },
-		// "ReturnsVersionFromPyprojectTOML": {
-		// 	parentDir:   "all",
-		// 	inputFile:   "pyproject.toml",
-		// 	assertError: require.NoError,
-		// 	expected:    "9.8.123456",
-		// },
-		// "ReturnsErrorFromInvalidPyprojectTOML": {
-		// 	parentDir:   "no-version",
-		// 	inputFile:   "pyproject.toml",
-		// 	assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
-		// 	expected:    "",
-		// },
-		// "ReturnsVersionFromVERSIONFile": {
-		// 	parentDir:   "all",
-		// 	inputFile:   "VERSION",
-		// 	assertError: require.NoError,
-		// 	expected:    "6.6.6",
-		// },
-		// "ReturnsErrorFromInvalidVERSIONFile": {
-		// 	parentDir:   "no-version",
-		// 	inputFile:   "VERSION",
-		// 	assertError: test.IsSentinelError(files.ErrGettingVersionFromVERSION),
-		// 	expected:    "",
-		// },
+		"ReturnsVersionFromPackageJSON": {
+			parentDir:   "all",
+			inputFile:   "package.json",
+			assertError: require.NoError,
+			expected:    "1.0.4",
+		},
+		"ReturnsErrorFromInvalidPackageJSON": {
+			parentDir:   "no-version",
+			inputFile:   "package.json",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromPackageJSON),
+			expected:    "",
+		},
+		"ReturnsVersionFromPyprojectTOML": {
+			parentDir:   "all",
+			inputFile:   "pyproject.toml",
+			assertError: require.NoError,
+			expected:    "9.8.123456",
+		},
+		"ReturnsErrorFromInvalidPyprojectTOML": {
+			parentDir:   "no-version",
+			inputFile:   "pyproject.toml",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
+		"ReturnsVersionFromVERSIONFile": {
+			parentDir:   "all",
+			inputFile:   "VERSION",
+			assertError: require.NoError,
+			expected:    "6.6.6",
+		},
+		"ReturnsErrorFromInvalidVERSIONFile": {
+			parentDir:   "no-version",
+			inputFile:   "VERSION",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromVERSION),
+			expected:    "",
+		},
 	}
 
 	for name, testCase := range testCases {
