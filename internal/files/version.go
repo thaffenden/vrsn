@@ -8,50 +8,51 @@ import (
 )
 
 type versionFileMatcher struct {
-	lineMatcher   func(string) bool
-	versionRegex  string
-	notFoundError error
+	lineMatcher    func(string) bool
+	notFoundError  error
+	singleLineFile bool
+	versionRegex   string
+}
+
+var tomlMatcher = versionFileMatcher{
+	lineMatcher: func(line string) bool {
+		return strings.Contains(line, "version =")
+	},
+	notFoundError:  ErrGettingVersionFromTOML,
+	singleLineFile: false,
+	versionRegex:   `(.*)(version = "){1}(?P<semver>\d+.\d+.\d)(".*)`,
 }
 
 // versionFileMatchers contains the utilies to extract and update the version
 // from the version file.
 func versionFileMatchers() map[string]versionFileMatcher {
 	return map[string]versionFileMatcher{
-		"Cargo.toml": {
-			lineMatcher: func(line string) bool {
-				return strings.Contains(line, "version =")
-			},
-			versionRegex:  `(.*)(version = "){1}(?P<semver>\d+.\d+.\d+)(".*)`,
-			notFoundError: ErrGettingVersionFromTOML,
-		},
+		"Cargo.toml": tomlMatcher,
 		"CMakeLists.txt": {
 			lineMatcher: func(line string) bool {
 				return strings.Contains(line, "project(")
 			},
-			versionRegex:  `(project\(.*)(VERSION ){1}(?P<semver>\d+.\d+.\d+)(.*\))`,
-			notFoundError: ErrGettingVersionFromCMakeLists,
+			notFoundError:  ErrGettingVersionFromCMakeLists,
+			singleLineFile: false,
+			versionRegex:   `(project\(.*)(VERSION ){1}(?P<semver>\d+.\d+.\d+)(.*\))`,
 		},
 		"package.json": {
 			lineMatcher: func(line string) bool {
 				return strings.Contains(line, `"version": "`)
 			},
-			versionRegex:  `(.*)("version": *"){1}(?P<semver>\d+.\d+.\d+)(".*)`,
-			notFoundError: ErrGettingVersionFromPackageJSON,
+			notFoundError:  ErrGettingVersionFromPackageJSON,
+			singleLineFile: false,
+			versionRegex:   `(.*)("version": *"){1}(?P<semver>\d+.\d+.\d+)(".*)`,
 		},
-		"pyproject.toml": {
-			lineMatcher: func(line string) bool {
-				return strings.Contains(line, "version =")
-			},
-			versionRegex:  `(.*)(version = "){1}(?P<semver>\d+.\d+.\d+)(".*)`,
-			notFoundError: ErrGettingVersionFromTOML,
-		},
+		"pyproject.toml": tomlMatcher,
 		"VERSION": {
 			lineMatcher: func(line string) bool {
 				// single line file so nothing to match on.
 				return true
 			},
-			versionRegex:  `(.*)(.*)(?P<semver>\d+.\d+.\d+)(.*)`,
-			notFoundError: ErrGettingVersionFromVERSION,
+			notFoundError:  ErrGettingVersionFromVERSION,
+			singleLineFile: true,
+			versionRegex:   `(.*)(?P<semver>\d+.\d+.\d+)(.*)`,
 		},
 	}
 }
@@ -71,11 +72,20 @@ func (v versionFileMatcher) getVersion(scanner *bufio.Scanner) (string, error) {
 	for scanner.Scan() {
 		lineText := scanner.Text()
 
+		if v.singleLineFile && (lineText == "" || lineText == "\n") {
+			return "", v.notFoundError
+		}
+
+		if v.singleLineFile {
+			return lineText, nil
+		}
+
 		if v.lineMatcher(lineText) {
 			re := regexp.MustCompile(v.versionRegex)
 			result := make(map[string]string)
 
 			match := re.FindStringSubmatch(lineText)
+			fmt.Println(match)
 			for i, name := range re.SubexpNames() {
 				if i != 0 && name != "" {
 					result[name] = match[i]
@@ -95,6 +105,10 @@ func (v versionFileMatcher) getVersion(scanner *bufio.Scanner) (string, error) {
 }
 
 func (v versionFileMatcher) updateVersionInPlace(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	if v.singleLineFile {
+		return []string{newVersion}, nil
+	}
+
 	foundVersion := false
 	allLines := []string{}
 

@@ -112,12 +112,6 @@ func TestGetVersionFromString(t *testing.T) {
 		assertError require.ErrorAssertionFunc
 		expected    string
 	}{
-		"ReturnsErrorForUnsupportedVersionFile": {
-			parentDir:   "all",
-			inputFile:   "foo.txt",
-			assertError: require.Error,
-			expected:    "",
-		},
 		"ReturnsVersionFromCargoTOML": {
 			parentDir:   "all",
 			inputFile:   "Cargo.toml",
@@ -174,7 +168,9 @@ func TestGetVersionFromString(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			content, _ := ioutil.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
+			content, err := ioutil.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
+			require.NoError(t, err)
+
 			actual, err := files.GetVersionFromString(tc.inputFile, string(content))
 			tc.assertError(t, err)
 
