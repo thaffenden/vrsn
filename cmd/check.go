@@ -35,26 +35,32 @@ func NewCmdCheck() *cobra.Command {
 				return err
 			}
 
-			if len(versionFiles) > 1 {
+			numberOfVersionFiles := len(versionFiles)
+
+			if numberOfVersionFiles > 1 {
 				return errors.Errorf("looks like you have several version files: %s", versionFiles)
 			}
 
-			if len(versionFiles) == 0 && flags.Now == "" {
+			if numberOfVersionFiles == 0 && flags.Now == "" {
 				log.Info("no version files found in directory and no --now flag provided")
 				return errors.New("please either pass version with --now flag or run inside a directory that uses a version file")
 			}
 
-			if len(versionFiles) == 0 && flags.Was == "" {
+			if numberOfVersionFiles == 0 && flags.Was == "" {
 				log.Info("no version files found in directory and no --was flag provided")
 				return errors.New("please either pass version with --was flag or run inside a directory that uses a version file")
 			}
 
-			if len(versionFiles) == 1 {
+			if numberOfVersionFiles == 1 {
 				log.Debugf("reading current version from %s", versionFiles[0])
 				flags.Now, err = files.GetVersionFromFile(curDir, versionFiles[0])
 				if err != nil {
 					return err
 				}
+			}
+
+			if currentBranch == flags.BaseBranch && flags.Was == "" {
+				return errors.Errorf("currently on the %s branch and no --was value supplied, unable to compare versions", flags.BaseBranch)
 			}
 
 			if currentBranch != flags.BaseBranch {
