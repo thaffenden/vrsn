@@ -2,13 +2,19 @@
 package flags
 
 var (
-	// BaseBranch is the name of the base branch used when auto detecting version
-	// file changes.
+	// BaseBranch is the variable for the CLI flag `--base-branch` so you can set
+	// your git base branch if it's anything other than `main`.
 	BaseBranch string
-	// Now is the variable for the CLI flag --now.
+	// Commit is the variable for the CLI flag `--commit` used to tell the `bump`
+	// command to commit the version file after bumping.
+	Commit bool
+	// CommitMsg is the variable for the CLI flag `--commit-msg` used when
+	// committing version file changes with the `bump` command.
+	CommitMsg string
+	// Now is the variable for the CLI flag `--now`.
 	Now string
-	// Was is the variable for the CLI flag --was.
+	// Was is the variable for the CLI flag `--was`.
 	Was string
-	// Verbose is the variable for the CLI flag --verbose to enable debug log output.
+	// Verbose is the variable for the CLI flag `--verbose` to enable debug log output.
 	Verbose bool
 )
