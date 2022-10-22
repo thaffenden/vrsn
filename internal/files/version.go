@@ -61,13 +61,22 @@ type versionFileMatcher struct {
 	notFoundError error
 }
 
+func getVersionMatcher(inputFile string) (versionFileMatcher, error) {
+	matcher, exists := VersionFileMatchers()[inputFile]
+	if !exists {
+		return versionFileMatcher{}, fmt.Errorf("%s is not a supported version file type", inputFile)
+	}
+
+	return matcher, nil
+}
+
 // VersionFileMatchers contains the utilies to extract and update the version
 // from the version file.
 func VersionFileMatchers() map[string]versionFileMatcher {
 	return map[string]versionFileMatcher{
 		"Cargo.toml": {
 			lineMatcher: func(line string) bool {
-				return strings.Contains(line, "version=")
+				return strings.Contains(line, "version =")
 			},
 			versionRegex:  `(.*)(version = "){1}(?P<semver>\d+.\d+.\d+)(".*)`,
 			notFoundError: ErrGettingVersionFromTOML,
@@ -97,7 +106,11 @@ func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
 				}
 			}
 
+			fmt.Println(result)
+
 			semver, exists := result["semver"]
+
+			fmt.Printf("SEMVER: %s ||| %v", semver, exists)
 			if !exists {
 				return "", v.notFoundError
 			}
@@ -107,4 +120,29 @@ func (v versionFileMatcher) GetVersion(scanner *bufio.Scanner) (string, error) {
 	}
 
 	return "", v.notFoundError
+}
+
+func (v versionFileMatcher) UpdateVersionInPlace(scanner *bufio.Scanner, newVersion string) ([]string, error) {
+	foundVersion := false
+	allLines := []string{}
+
+	for scanner.Scan() {
+		lineText := scanner.Text()
+
+		if v.lineMatcher(lineText) {
+			re := regexp.MustCompile(v.versionRegex)
+			newVersionLine := re.ReplaceAllString(lineText, fmt.Sprintf(`${1}${2}%s${4}`, newVersion))
+			allLines = append(allLines, newVersionLine)
+			foundVersion = true
+			continue
+		}
+
+		allLines = append(allLines, lineText)
+	}
+
+	if !foundVersion {
+		return []string{}, v.notFoundError
+	}
+
+	return allLines, nil
 }

@@ -11,7 +11,11 @@ import (
 // GetVersionFromFile reads the version file and returns the semantic
 // version contained.
 func GetVersionFromFile(dir string, inputFile string) (string, error) {
-	versionFunc, err := getVersionFunc(inputFile)
+	// versionFunc, err := getVersionFunc(inputFile)
+	// if err != nil {
+	// 	return "", err
+	// }
+	matcher, err := getVersionMatcher(inputFile)
 	if err != nil {
 		return "", err
 	}
@@ -29,7 +33,12 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 
 	scanner := bufio.NewScanner(file)
 
-	version, err := versionFunc.reader(scanner)
+	// version, err := versionFunc.reader(scanner)
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	version, err := matcher.GetVersion(scanner)
 	if err != nil {
 		return "", err
 	}
