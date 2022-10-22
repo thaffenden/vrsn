@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thaffenden/vrsn/internal/files"
 	"github.com/thaffenden/vrsn/internal/flags"
+	"github.com/thaffenden/vrsn/internal/git"
 	"github.com/thaffenden/vrsn/internal/logger"
 	"github.com/thaffenden/vrsn/internal/prompt"
 )
@@ -35,7 +36,9 @@ func NewCmdBump() *cobra.Command {
 				return errors.New("no version file found in directory")
 			}
 
-			currentVersion, err := files.GetVersionFromFile(curDir, versionFiles[0])
+			versionFile := versionFiles[0]
+
+			currentVersion, err := files.GetVersionFromFile(curDir, versionFile)
 			if err != nil {
 				return err
 			}
@@ -46,11 +49,25 @@ func NewCmdBump() *cobra.Command {
 				return err
 			}
 
-			if err := files.WriteVersionToFile(curDir, versionFiles[0], newVersion); err != nil {
+			if err := files.WriteVersionToFile(curDir, versionFile, newVersion); err != nil {
 				return err
 			}
 
 			log.Infof("version bumped from %s to %s", currentVersion, newVersion)
+
+			if flags.Commit {
+				addOutput, err := git.Add(curDir, versionFile)
+				if err != nil {
+					return errors.Wrapf(err, "git add output: %s", addOutput)
+				}
+
+				commitOutput, err := git.Commit(curDir, versionFile, flags.CommitMsg)
+				if err != nil {
+					return errors.Wrapf(err, "git add output: %s", commitOutput)
+				}
+
+				log.Infof("version file committed")
+			}
 
 			return nil
 		},
@@ -59,5 +76,8 @@ func NewCmdBump() *cobra.Command {
 		SilenceUsage:  true,
 		Use:           "bump",
 	}
+
+	cmd.Flags().BoolVar(&flags.Commit, "commit", false, "use this flag to commit the version file after bumping")
+	cmd.Flags().StringVar(&flags.CommitMsg, "commit-msg", "bump version", "commit message provided when committing file")
 	return cmd
 }
