@@ -26,6 +26,30 @@ func TestWriteVersionToFile(t *testing.T) {
 			newVersion:  "",
 			assertError: require.Error,
 		},
+		"WritesVersionToBuildGradle": {
+			parentDir:   "bump",
+			inputFile:   "build.gradle",
+			newVersion:  "1.3.0",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidBuildGradle": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+		},
+		"WritesVersionToBuildGradleKTS": {
+			parentDir:   "bump",
+			inputFile:   "build.gradle.kts",
+			newVersion:  "0.9.12",
+			assertError: require.NoError,
+		},
+		"ReturnsErrorForInvalidBuildGradleKTS": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle.kts",
+			newVersion:  "",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+		},
 		"WritesVersionToCargoTOML": {
 			parentDir:   "bump",
 			inputFile:   "Cargo.toml",

@@ -9,6 +9,9 @@ const (
 	// ErrGettingVersionFromCMakeLists is the error when the version can't be
 	// found inside a CMakeLists.txt file.
 	ErrGettingVersionFromCMakeLists
+	// ErrGettingVersionFromBuildGradle is the error when the a version key can't
+	// be found inside a build.gradle or build.gradle.kts file.
+	ErrGettingVersionFromBuildGradle
 	// ErrGettingVersionFromPackageJSON is the error when a version key can't be
 	// found inside a package.json file.
 	ErrGettingVersionFromPackageJSON
@@ -27,6 +30,9 @@ func (e Error) Error() string {
 	switch e {
 	case ErrNoVersionFilesInDir:
 		return "no version files found in directory"
+
+	case ErrGettingVersionFromBuildGradle:
+		return "unable to read version from build.gradle"
 
 	case ErrGettingVersionFromCMakeLists:
 		return "unable to read version from CMakeLists.txt"

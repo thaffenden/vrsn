@@ -26,6 +26,30 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: require.Error,
 			expected:    "",
 		},
+		"ReturnsVersionFromBuildGradle": {
+			parentDir:   "all",
+			inputFile:   "build.gradle",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidBuildGradle": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
+		"ReturnsVersionFromBuildGradleKTS": {
+			parentDir:   "all",
+			inputFile:   "build.gradle.kts",
+			assertError: require.NoError,
+			expected:    "0.9.12",
+		},
+		"ReturnsErrorFromInvalidBuildGradleKTS": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle.kts",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
 		"ReturnsVersionFromCargoTOML": {
 			parentDir:   "all",
 			inputFile:   "Cargo.toml",
@@ -124,6 +148,30 @@ func TestGetVersionFromString(t *testing.T) {
 		assertError require.ErrorAssertionFunc
 		expected    string
 	}{
+		"ReturnsVersionFromBuildGradle": {
+			parentDir:   "all",
+			inputFile:   "build.gradle",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidBuildGradle": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
+		"ReturnsVersionFromBuildGradleKTS": {
+			parentDir:   "all",
+			inputFile:   "build.gradle.kts",
+			assertError: require.NoError,
+			expected:    "0.9.12",
+		},
+		"ReturnsErrorFromInvalidBuildGradleKTS": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle.kts",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
 		"ReturnsVersionFromCargoTOML": {
 			parentDir:   "all",
 			inputFile:   "Cargo.toml",

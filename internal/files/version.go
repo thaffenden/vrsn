@@ -23,11 +23,21 @@ var tomlMatcher = versionFileMatcher{
 	versionRegex:   `(.*)(version *=* *"*)(?P<semver>\d+.\d+.\d+)(.*)`,
 }
 
+// not toml files, but version string is same format.
+var gradleMatcher = versionFileMatcher{
+	lineMatcher:    tomlMatcher.lineMatcher,
+	notFoundError:  ErrGettingVersionFromBuildGradle,
+	singleLineFile: false,
+	versionRegex:   tomlMatcher.versionRegex,
+}
+
 // versionFileMatchers contains the utilies to extract and update the version
 // from the version file.
 func versionFileMatchers() map[string]versionFileMatcher {
 	return map[string]versionFileMatcher{
-		"Cargo.toml": tomlMatcher,
+		"build.gradle":     gradleMatcher,
+		"build.gradle.kts": gradleMatcher,
+		"Cargo.toml":       tomlMatcher,
 		"CMakeLists.txt": {
 			lineMatcher: func(line string) bool {
 				return strings.Contains(line, "project(")
