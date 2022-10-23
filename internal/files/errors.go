@@ -12,6 +12,9 @@ const (
 	// ErrGettingVersionFromPackageJSON is the error when a version key can't be
 	// found inside a package.json file.
 	ErrGettingVersionFromPackageJSON
+	// ErrGettingVersionFromSetupPy is the error when a version key can't be found
+	// inside a setup.py file.
+	ErrGettingVersionFromSetupPy
 	// ErrGettingVersionFromTOML is the error when a version key can't be found
 	// inside a toml file.
 	ErrGettingVersionFromTOML
@@ -30,6 +33,9 @@ func (e Error) Error() string {
 
 	case ErrGettingVersionFromPackageJSON:
 		return "error getting version from package.json"
+
+	case ErrGettingVersionFromSetupPy:
+		return "error getting version from setup.py"
 
 	case ErrGettingVersionFromTOML:
 		return "error getting version from toml file"

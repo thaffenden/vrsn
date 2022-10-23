@@ -74,6 +74,18 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 			expected:    "",
 		},
+		"ReturnsVersionFromSetupPy": {
+			parentDir:   "all",
+			inputFile:   "setup.py",
+			assertError: require.NoError,
+			expected:    "0.2.0",
+		},
+		"ReturnsErrorFromInvalidSetupPy": {
+			parentDir:   "no-version",
+			inputFile:   "setup.py",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromSetupPy),
+			expected:    "",
+		},
 		"ReturnsVersionFromVERSIONFile": {
 			parentDir:   "all",
 			inputFile:   "VERSION",
@@ -146,6 +158,18 @@ func TestGetVersionFromString(t *testing.T) {
 			parentDir:   "no-version",
 			inputFile:   "pyproject.toml",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
+		"ReturnsVersionFromSetupPy": {
+			parentDir:   "all",
+			inputFile:   "setup.py",
+			assertError: require.NoError,
+			expected:    "0.2.0",
+		},
+		"ReturnsErrorFromInvalidSetupPy": {
+			parentDir:   "no-version",
+			inputFile:   "setup.py",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromSetupPy),
 			expected:    "",
 		},
 		"ReturnsVersionFromVERSIONFile": {

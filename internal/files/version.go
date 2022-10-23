@@ -45,6 +45,14 @@ func versionFileMatchers() map[string]versionFileMatcher {
 			versionRegex:   `(.*)("version": *"){1}(?P<semver>\d+.\d+.\d+)(".*)`,
 		},
 		"pyproject.toml": tomlMatcher,
+		"setup.py": {
+			lineMatcher: func(line string) bool {
+				return strings.Contains(line, `version=`)
+			},
+			notFoundError:  ErrGettingVersionFromSetupPy,
+			singleLineFile: false,
+			versionRegex:   `(.*)(version=['"])(?P<semver>\d+.\d+.\d+)(.*)`,
+		},
 		"VERSION": {
 			lineMatcher: func(line string) bool {
 				// single line file so nothing to match on.
