@@ -6,9 +6,18 @@ type Error uint
 const (
 	// ErrNoVersionFilesInDir is the error when no version files are found.
 	ErrNoVersionFilesInDir Error = iota
+	// ErrGettingVersionFromCMakeLists is the error when the version can't be
+	// found inside a CMakeLists.txt file.
+	ErrGettingVersionFromCMakeLists
+	// ErrGettingVersionFromBuildGradle is the error when the a version key can't
+	// be found inside a build.gradle or build.gradle.kts file.
+	ErrGettingVersionFromBuildGradle
 	// ErrGettingVersionFromPackageJSON is the error when a version key can't be
 	// found inside a package.json file.
 	ErrGettingVersionFromPackageJSON
+	// ErrGettingVersionFromSetupPy is the error when a version key can't be found
+	// inside a setup.py file.
+	ErrGettingVersionFromSetupPy
 	// ErrGettingVersionFromTOML is the error when a version key can't be found
 	// inside a toml file.
 	ErrGettingVersionFromTOML
@@ -22,14 +31,23 @@ func (e Error) Error() string {
 	case ErrNoVersionFilesInDir:
 		return "no version files found in directory"
 
+	case ErrGettingVersionFromBuildGradle:
+		return "unable to read version from build.gradle"
+
+	case ErrGettingVersionFromCMakeLists:
+		return "unable to read version from CMakeLists.txt"
+
 	case ErrGettingVersionFromPackageJSON:
-		return "error getting version from package.json"
+		return "unable to read version from package.json"
+
+	case ErrGettingVersionFromSetupPy:
+		return "unable to read version from setup.py"
 
 	case ErrGettingVersionFromTOML:
-		return "error getting version from toml file"
+		return "unable to read version from toml file"
 
 	case ErrGettingVersionFromVERSION:
-		return "error getting version from VERSION file"
+		return "unable to read version from VERSION file"
 
 	default:
 		return "unknown error"

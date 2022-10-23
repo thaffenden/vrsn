@@ -26,6 +26,30 @@ func TestGetVersionFromFile(t *testing.T) {
 			assertError: require.Error,
 			expected:    "",
 		},
+		"ReturnsVersionFromBuildGradle": {
+			parentDir:   "all",
+			inputFile:   "build.gradle",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidBuildGradle": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
+		"ReturnsVersionFromBuildGradleKTS": {
+			parentDir:   "all",
+			inputFile:   "build.gradle.kts",
+			assertError: require.NoError,
+			expected:    "0.9.12",
+		},
+		"ReturnsErrorFromInvalidBuildGradleKTS": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle.kts",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
 		"ReturnsVersionFromCargoTOML": {
 			parentDir:   "all",
 			inputFile:   "Cargo.toml",
@@ -36,6 +60,18 @@ func TestGetVersionFromFile(t *testing.T) {
 			parentDir:   "no-version",
 			inputFile:   "Cargo.toml",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
+		"ReturnsVersionFromCMakeLists": {
+			parentDir:   "all",
+			inputFile:   "CMakeLists.txt",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidCMakeLists": {
+			parentDir:   "no-version",
+			inputFile:   "CMakeLists.txt",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromCMakeLists),
 			expected:    "",
 		},
 		"ReturnsVersionFromPackageJSON": {
@@ -60,6 +96,18 @@ func TestGetVersionFromFile(t *testing.T) {
 			parentDir:   "no-version",
 			inputFile:   "pyproject.toml",
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
+			expected:    "",
+		},
+		"ReturnsVersionFromSetupPy": {
+			parentDir:   "all",
+			inputFile:   "setup.py",
+			assertError: require.NoError,
+			expected:    "0.2.0",
+		},
+		"ReturnsErrorFromInvalidSetupPy": {
+			parentDir:   "no-version",
+			inputFile:   "setup.py",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromSetupPy),
 			expected:    "",
 		},
 		"ReturnsVersionFromVERSIONFile": {
@@ -100,10 +148,28 @@ func TestGetVersionFromString(t *testing.T) {
 		assertError require.ErrorAssertionFunc
 		expected    string
 	}{
-		"ReturnsErrorForUnsupportedVersionFile": {
+		"ReturnsVersionFromBuildGradle": {
 			parentDir:   "all",
-			inputFile:   "foo.txt",
-			assertError: require.Error,
+			inputFile:   "build.gradle",
+			assertError: require.NoError,
+			expected:    "1.3.0",
+		},
+		"ReturnsErrorFromInvalidBuildGradle": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
+			expected:    "",
+		},
+		"ReturnsVersionFromBuildGradleKTS": {
+			parentDir:   "all",
+			inputFile:   "build.gradle.kts",
+			assertError: require.NoError,
+			expected:    "0.9.12",
+		},
+		"ReturnsErrorFromInvalidBuildGradleKTS": {
+			parentDir:   "no-version",
+			inputFile:   "build.gradle.kts",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromBuildGradle),
 			expected:    "",
 		},
 		"ReturnsVersionFromCargoTOML": {
@@ -142,6 +208,18 @@ func TestGetVersionFromString(t *testing.T) {
 			assertError: test.IsSentinelError(files.ErrGettingVersionFromTOML),
 			expected:    "",
 		},
+		"ReturnsVersionFromSetupPy": {
+			parentDir:   "all",
+			inputFile:   "setup.py",
+			assertError: require.NoError,
+			expected:    "0.2.0",
+		},
+		"ReturnsErrorFromInvalidSetupPy": {
+			parentDir:   "no-version",
+			inputFile:   "setup.py",
+			assertError: test.IsSentinelError(files.ErrGettingVersionFromSetupPy),
+			expected:    "",
+		},
 		"ReturnsVersionFromVERSIONFile": {
 			parentDir:   "all",
 			inputFile:   "VERSION",
@@ -162,7 +240,9 @@ func TestGetVersionFromString(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			content, _ := ioutil.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
+			content, err := ioutil.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
+			require.NoError(t, err)
+
 			actual, err := files.GetVersionFromString(tc.inputFile, string(content))
 			tc.assertError(t, err)
 

@@ -11,7 +11,7 @@ import (
 // GetVersionFromFile reads the version file and returns the semantic
 // version contained.
 func GetVersionFromFile(dir string, inputFile string) (string, error) {
-	versionFunc, err := getVersionFunc(inputFile)
+	matcher, err := getVersionMatcher(inputFile)
 	if err != nil {
 		return "", err
 	}
@@ -29,7 +29,7 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 
 	scanner := bufio.NewScanner(file)
 
-	version, err := versionFunc.reader(scanner)
+	version, err := matcher.getVersion(scanner)
 	if err != nil {
 		return "", err
 	}
@@ -40,7 +40,7 @@ func GetVersionFromFile(dir string, inputFile string) (string, error) {
 // already been read and is passed as a string such as when getting the
 // contents of a file from a git branch.
 func GetVersionFromString(fileName string, input string) (string, error) {
-	versionFunc, err := getVersionFunc(fileName)
+	matcher, err := getVersionMatcher(fileName)
 	if err != nil {
 		return "", err
 	}
@@ -48,40 +48,9 @@ func GetVersionFromString(fileName string, input string) (string, error) {
 	reader := strings.NewReader(input)
 	scanner := bufio.NewScanner(reader)
 
-	version, err := versionFunc.reader(scanner)
+	version, err := matcher.getVersion(scanner)
 	if err != nil {
 		return "", err
 	}
 	return version, nil
-}
-
-func getVersionFromPackageJSON(scanner *bufio.Scanner) (string, error) {
-	for scanner.Scan() {
-		lineText := scanner.Text()
-		if strings.Contains(lineText, `"version": "`) {
-			return strings.Split(lineText, `"`)[3], nil
-		}
-	}
-
-	return "", ErrGettingVersionFromPackageJSON
-}
-
-func getVersionFromTOML(scanner *bufio.Scanner) (string, error) {
-	for scanner.Scan() {
-		lineText := scanner.Text()
-
-		if strings.Contains(lineText, `version =`) {
-			return strings.Split(lineText, `"`)[1], nil
-		}
-	}
-	return "", ErrGettingVersionFromTOML
-}
-
-func getVersionFromVersionFile(scanner *bufio.Scanner) (string, error) {
-	for scanner.Scan() {
-		// Single line file, so can just return on first line.
-		return scanner.Text(), nil
-	}
-
-	return "", ErrGettingVersionFromVERSION
 }

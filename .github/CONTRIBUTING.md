@@ -13,18 +13,24 @@ changes are inline with the repo's code standards.
 
 ## Adding support for a new version file type
 
-Supported version file types are stored in the `versionFileMap()` function in
+Supported version file types are stored in the `versionFileMatchers()` function in
 `internal/files/version.go`.
 
-This function maps the version file name to the functions used to read and
-update the version value from the file.
+This function maps the version file name to the values required to extract the
+semantic version from a file.
 
-All version readers and updaters should use the same function signatures
-as currently defined.
+The `lineMatcher` is a function to determine if the current line of the file is
+the one with the version on.
 
-To ensure only the version line is changed in the version files, the
-`updateVersionInFile` function uses a regex expression to replace just the
-semantic version in place an not touch any other lines.
+`versionRegex` is a regexp expression to extract the version from the line.
+Some key things to note:
+
+- The group for the actual version must be a capture group named `semver`. The
+following should always work for that part: `(?P<semver>\d+.\d+.\d)`.
+- The version should always be the 3rd group in the expression. This is
+important as the updater function uses the groups by index.
+If you don't need more groups in the expression you can pad it out with `(.*)`,
+see the expression used for `VERSION` files as an example.
 
 ### Adding unit tests
 
