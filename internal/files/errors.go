@@ -29,19 +29,19 @@ func (e Error) Error() string {
 		return "no version files found in directory"
 
 	case ErrGettingVersionFromCMakeLists:
-		return "error getting version from CMakeLists.txt"
+		return "unable to read version from CMakeLists.txt"
 
 	case ErrGettingVersionFromPackageJSON:
-		return "error getting version from package.json"
+		return "unable to read version from package.json"
 
 	case ErrGettingVersionFromSetupPy:
-		return "error getting version from setup.py"
+		return "unable to read version from setup.py"
 
 	case ErrGettingVersionFromTOML:
-		return "error getting version from toml file"
+		return "unable to read version from toml file"
 
 	case ErrGettingVersionFromVERSION:
-		return "error getting version from VERSION file"
+		return "unable to read version from VERSION file"
 
 	default:
 		return "unknown error"
