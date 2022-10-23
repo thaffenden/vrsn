@@ -20,7 +20,7 @@ var tomlMatcher = versionFileMatcher{
 	},
 	notFoundError:  ErrGettingVersionFromTOML,
 	singleLineFile: false,
-	versionRegex:   `(.*)(version = "){1}(?P<semver>\d+.\d+.\d)(".*)`,
+	versionRegex:   `(.*)(version *=* *"*)(?P<semver>\d+.\d+.\d+)(.*)`,
 }
 
 // versionFileMatchers contains the utilies to extract and update the version
@@ -85,7 +85,10 @@ func (v versionFileMatcher) getVersion(scanner *bufio.Scanner) (string, error) {
 			result := make(map[string]string)
 
 			match := re.FindStringSubmatch(lineText)
-			fmt.Println(match)
+			if match == nil {
+				return "", v.notFoundError
+			}
+
 			for i, name := range re.SubexpNames() {
 				if i != 0 && name != "" {
 					result[name] = match[i]
