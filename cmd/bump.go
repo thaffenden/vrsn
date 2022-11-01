@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/pkg/errors"
@@ -15,6 +16,8 @@ import (
 
 // NewCmdBump creates the bump command.
 func NewCmdBump() *cobra.Command {
+	shortDescription := "Increment the current semantic version with a valid patch, major or minor bump."
+
 	cmd := &cobra.Command{
 		Args: cobra.OnlyValidArgs,
 		RunE: func(ccmd *cobra.Command, args []string) error {
@@ -87,15 +90,22 @@ func NewCmdBump() *cobra.Command {
 
 			return nil
 		},
-		Long:          "this is the long example",
-		Short:         "Increment the current semantic version with a valid patch, major or minor bump.",
+		Long: fmt.Sprintf(`%s
+
+Pass the increment type directly as an argument to the command, e.g.:
+
+  vrsn bump patch
+
+Or use the interactive prompt to select the increment you want.
+The semantic version in the version file will be updated in place.`, shortDescription),
+		Short:         shortDescription,
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		Use:           "bump",
 		ValidArgs:     []string{"patch", "major", "minor"},
 	}
 
-	cmd.Flags().BoolVar(&flags.Commit, "commit", false, "use this flag to commit the version file after bumping")
-	cmd.Flags().StringVar(&flags.CommitMsg, "commit-msg", "bump version", "commit message provided when committing file")
+	cmd.Flags().BoolVar(&flags.Commit, "commit", false, "Commit the updated version file after bumping.")
+	cmd.Flags().StringVar(&flags.CommitMsg, "commit-msg", "bump version", "Customise the commit message used when committing the version bump.")
 	return cmd
 }
