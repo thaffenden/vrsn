@@ -17,7 +17,7 @@ commands:
     steps:
       - run:
           name: check version bump is valid
-          command: vrsn bump << parameters.additional-args >>
+          command: vrsn bump << parameters.type >> << parameters.additional-args >>
 
   check-version:
     description: Check the version bump is a valid semver increment with vrsn.
