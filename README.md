@@ -1,7 +1,7 @@
-# vrsn
+<h1 align="center">vrsn</h1>
 
 <p align="center">
-  <em>A single tool for all of your semantic versioning needs.</em>
+  <em>A single tool for <strong>all</strong> of your semantic versioning needs.</em>
 </p>
 
 ![vrsn-demo](https://user-images.githubusercontent.com/14163530/197282114-5b6bfc56-2154-4213-ba77-438b53233b3c.gif)
@@ -48,7 +48,7 @@ project, just use `vrsn` and get on with the important stuff.
 Ensuring you properly version releases is important.
 
 I've had to write semantic version checks in CI pipelines in different ways for
-different languages in different roles. Now I can just use `vrsn` and not have
+different languages in different jobs. Now I can just use `vrsn` and not have
 to worry about solving the same problems again.
 
 ## Install
@@ -103,10 +103,15 @@ workflows:
                   - main
 ```
 
-For an example you can look at this repo's CircleCI config, which uses the orb.
+For an example you can look at this repo's [CircleCI config](./.circleci/config.yml)
+which uses the orb.
 
 See the [CircleCI orb docs](https://circleci.com/developer/orbs/orb/thaffenden/vrsn)
 for more specifics on how to customise the orb jobs to best suite your needs.
+
+The orb is semantically versioned using the same number as the `vrsn` binary
+and Docker container, so you can pin a specific version in your CI config or
+use the `volatile` tag to always get the latest version of `vrsn`.
 
 ## Commands
 

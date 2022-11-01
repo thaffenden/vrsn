@@ -1,26 +1,23 @@
 # yamllint disable rule:line-length
 version: 2.1
 
-setup: << pipeline.parameters.run-setup-workflow >>
-
-parameters:
-  run-setup-workflow:
-    default: true
-    type: boolean
-  run-orb-workflow:
-    default: false
-    type: boolean
-
 orbs:
   circleci-cli: circleci/circleci-cli@volatile
   path-filtering: circleci/path-filtering@0.1.3
   vrsn: thaffenden/vrsn@volatile
 
-ignore-main: &ignore-main
-  filters:
-    branches:
-      ignore:
-        - main
+anchors:
+  ignore-main: &ignore-main
+    filters:
+      branches:
+        ignore:
+          - main
+
+  only-main: &only-main
+    filters:
+      branches:
+        only:
+          - main
 
 jobs:
   push-dev-tagged-orb:
@@ -39,6 +36,7 @@ jobs:
           name: publish live orb
           command: |
             VERSION=$(head -n 1 VERSION)
+            sed -r "s/\"%%VRSN_VERSION%%\"/$VERSION/g" -i ./.circleci/orb.yml
             circleci orb publish ./.circleci/orb.yml "thaffenden/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
 
   validate-orb:
@@ -50,33 +48,22 @@ jobs:
           command: circleci orb validate ./.circleci/orb.yml
 
 workflows:
-  setup:
-    when:
-      and:
-        - equal: [true, << pipeline.parameters.run-setup-workflow >>]
+  pull-request-build:
     jobs:
       - vrsn/check-version:
           <<: *ignore-main
-      - path-filtering/filter:
-          config-path: .circleci/config.yml
-          mapping: |
-            .* run-setup-workflow false
-            .circleci/.* run-orb-workflow true
-
-  orb-test-and-release:
-    when:
-      and:
-        - equal: [true, << pipeline.parameters.run-orb-workflow >>]
-    jobs:
-      - validate-orb
+      - validate-orb:
+          <<: *ignore-main
       - push-dev-tagged-orb:
           <<: *ignore-main
           requires:
             - validate-orb
+
+  merge-to-main:
+    jobs:
+      - validate-orb:
+          <<: *only-main
       - push-live-tagged-orb:
-          filters:
-            branches:
-              only:
-                - main
+          <<: *only-main
           requires:
             - validate-orb
