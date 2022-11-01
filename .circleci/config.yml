@@ -36,6 +36,7 @@ jobs:
           name: publish live orb
           command: |
             VERSION=$(head -n 1 VERSION)
+            sed -r "s/\"%%VRSN_VERSION%%\"/$VERSION/g" -i ./.circleci/orb.yml
             circleci orb publish ./.circleci/orb.yml "thaffenden/vrsn@$VERSION" --token $CIRCLECI_ORB_API_TOKEN
 
   validate-orb:
