@@ -1,7 +1,9 @@
 package version
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 )
 
 // BumpOptions contains details about the bump options.
@@ -45,19 +47,18 @@ func (b BumpOptions) PromptOptions() []string {
 }
 
 // SelectedIncrement gets ust the version number from the user selected prompt.
-func (b BumpOptions) SelectedIncrement(increment string) string {
-	switch increment {
-	case b.formattedPatch():
-		return b.Patch
-
-	case b.formattedMinor():
-		return b.Minor
-
-	case b.formattedMajor():
-		return b.Major
+func (b BumpOptions) SelectedIncrement(increment string) (string, error) {
+	if strings.Contains(increment, "patch") {
+		return b.Patch, nil
+	}
+	if strings.Contains(increment, "minor") {
+		return b.Minor, nil
+	}
+	if strings.Contains(increment, "major") {
+		return b.Major, nil
 	}
 
-	return ""
+	return "", errors.New("invalid increment type")
 }
 
 func (b BumpOptions) formattedMajor() string {

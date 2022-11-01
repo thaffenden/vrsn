@@ -10,11 +10,13 @@ import (
 	"github.com/thaffenden/vrsn/internal/git"
 	"github.com/thaffenden/vrsn/internal/logger"
 	"github.com/thaffenden/vrsn/internal/prompt"
+	"github.com/thaffenden/vrsn/internal/version"
 )
 
 // NewCmdBump creates the bump command.
 func NewCmdBump() *cobra.Command {
 	cmd := &cobra.Command{
+		Args: cobra.OnlyValidArgs,
 		RunE: func(ccmd *cobra.Command, args []string) error {
 			// TODO: support color option.
 			log := logger.NewBasic(false, flags.Verbose)
@@ -22,6 +24,8 @@ func NewCmdBump() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			log.Debugf("bump command args: %s", args)
 
 			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
 			if err != nil {
@@ -43,10 +47,22 @@ func NewCmdBump() *cobra.Command {
 				return err
 			}
 
-			// TODO: support passing bump type through flag
-			newVersion, err := prompt.SelectBumpType(currentVersion)
-			if err != nil {
-				return err
+			var newVersion string
+			if len(args) > 0 {
+				options, err := version.GetBumpOptions(currentVersion)
+				if err != nil {
+					return err
+				}
+
+				newVersion, err = options.SelectedIncrement(args[0])
+				if err != nil {
+					return err
+				}
+			} else {
+				newVersion, err = prompt.SelectBumpType(currentVersion)
+				if err != nil {
+					return err
+				}
 			}
 
 			if err := files.WriteVersionToFile(curDir, versionFile, newVersion); err != nil {
@@ -71,10 +87,12 @@ func NewCmdBump() *cobra.Command {
 
 			return nil
 		},
-		Short:         "increment semantic version",
+		Long:          "this is the long example",
+		Short:         "Increment the current semantic version with a valid patch, major or minor bump.",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		Use:           "bump",
+		ValidArgs:     []string{"patch", "major", "minor"},
 	}
 
 	cmd.Flags().BoolVar(&flags.Commit, "commit", false, "use this flag to commit the version file after bumping")
