@@ -37,7 +37,7 @@ executors:
       - image: ghcr.io/thaffenden/vrsn:<< parameters.version >>
     parameters:
       version:
-        default: latest
+        default: "%%VRSN_VERSION%%"
         type: string
 
 jobs:
