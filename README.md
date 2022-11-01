@@ -1,6 +1,8 @@
 # vrsn
 
-A single tool for your semantic versioning needs.
+<p align="center">
+  <em>A single tool for all of your semantic versioning needs.</em>
+</p>
 
 ![vrsn-demo](https://user-images.githubusercontent.com/14163530/197282114-5b6bfc56-2154-4213-ba77-438b53233b3c.gif)
 
@@ -56,17 +58,6 @@ to worry about solving the same problems again.
 Find the latest version for your system on the
 [GitHub releases page](https://github.com/thaffenden/vrsn/releases).
 
-### Run the Docker container
-
-Get the Docker container from the
-[GitHub container registry](https://github.com/thaffenden/vrsn/pkgs/container/vrsn).
-
-```bash
-docker pull ghcr.io/thaffenden/vrsn:latest
-```
-
-See [Running in Docker](#running-in-docker) for more details.
-
 ### Build it locally
 
 If you have go installed, you can clone this repo and run:
@@ -77,6 +68,17 @@ make install
 
 This will build the binary and then copy it to `/usr/bin/vrsn` so it will be
 available on your path. Nothing more to it.
+
+### Run the Docker container
+
+Get the Docker container from the
+[GitHub container registry](https://github.com/thaffenden/vrsn/pkgs/container/vrsn).
+
+```bash
+docker pull ghcr.io/thaffenden/vrsn:latest
+```
+
+See [Running in Docker](#running-in-docker) for more details.
 
 ### Use the CircleCI Orb
 
@@ -94,13 +96,17 @@ Then use the `check-version` job in your workflow like:
 workflows:
   build:
     jobs:
-      - vrsn/check-version
+      - vrsn/check-version:
+            filters:
+              branches:
+                ignore:
+                  - main
 ```
 
 For an example you can look at this repo's CircleCI config, which uses the orb.
 
-See the page in the CircleCI docs for more details on the options you can pass
-to make sure the job works for your needs.
+See the [CircleCI orb docs](https://circleci.com/developer/orbs/orb/thaffenden/vrsn)
+for more specifics on how to customise the orb jobs to best suite your needs.
 
 ## Commands
 
@@ -138,13 +144,17 @@ Run `vrsn bump` to increment the current version file.
 It will prompt you to select the bump type and then write the new valid semver
 version in your version file.
 
+If you want to avoid the interactive picker you can pass the increment level as
+an argument to the `bump` command, e.g.:
+
+```bash
+vrsn bump patch
+```
+
 Want to automatically commit the version bump? Just use the `--commit` flag. 🙌
 
 Don't like the default commit message? Provide your own custom one with
 `--commit-msg`.
-
-**Coming soon:** flags so you can avoid the picker.
-Just run `vrsn bump --patch` to increment a patch version.
 
 ## Running in Docker
 

@@ -31,5 +31,5 @@ func SelectBumpType(currentVersion string) (string, error) {
 		return "", err
 	}
 
-	return versionOptions.SelectedIncrement(answer.Selected), nil
+	return versionOptions.SelectedIncrement(answer.Selected)
 }

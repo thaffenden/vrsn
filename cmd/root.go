@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 		}
 		return nil
 	},
-	Short:   "check semantic versions are valid",
+	Short:   "A single tool for all of your semantic versioning needs.",
 	Use:     "vrsn",
 	Version: Version,
 }

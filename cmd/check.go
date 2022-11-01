@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/pkg/errors"
@@ -14,6 +15,8 @@ import (
 
 // NewCmdCheck creates the check command.
 func NewCmdCheck() *cobra.Command {
+	shortDescription := "Check the semantic version has been correctly incremented."
+
 	cmd := &cobra.Command{
 		RunE: func(ccmd *cobra.Command, args []string) error {
 			// TODO: support color option.
@@ -92,13 +95,26 @@ func NewCmdCheck() *cobra.Command {
 
 			return nil
 		},
-		Short:         "check semantic versions are valid",
+		Long: fmt.Sprintf(`%s
+
+Detects if you are on a branch that is not the repository's base branch so the
+current version can be read from the git history.
+If you're on a branch that is not the repository's base branch just run:
+
+  vrsn check
+
+That's all you need!
+
+You can also use the --was and --now flags to compare the versions so you can
+read them from A N Y W H E R E.
+`, shortDescription),
+		Short:         shortDescription,
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		Use:           "check",
 	}
-	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "name of the base branch used when auto detecting version changes")
-	cmd.Flags().StringVar(&flags.Was, "was", "", "the previous semantic version (if passing for direct comparison)")
-	cmd.PersistentFlags().StringVar(&flags.Now, "now", "", "the current semantic version (if passing for direct comparison)")
+	cmd.Flags().StringVar(&flags.BaseBranch, "base-branch", "main", "Name of the base branch used when auto detecting version changes.")
+	cmd.Flags().StringVar(&flags.Was, "was", "", "The previous semantic version (if passing for direct comparison).")
+	cmd.PersistentFlags().StringVar(&flags.Now, "now", "", "The current semantic version (if passing for direct comparison).")
 	return cmd
 }
