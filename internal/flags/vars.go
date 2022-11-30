@@ -17,4 +17,7 @@ var (
 	Was string
 	// Verbose is the variable for the CLI flag `--verbose` to enable debug log output.
 	Verbose bool
+	// VersionFile is the variable for the CLI flag `--file` to provide a specific
+	// version file path, rather than having vrsn try and work out what to use.
+	VersionFile string
 )
