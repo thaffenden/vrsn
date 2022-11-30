@@ -6,6 +6,9 @@ type Error uint
 const (
 	// ErrNoVersionFilesInDir is the error when no version files are found.
 	ErrNoVersionFilesInDir Error = iota
+	// ErrMultipleVersionFiles is the error when there are multiple valid version
+	// file types found in a directory.
+	ErrMultipleVersionFiles
 	// ErrGettingVersionFromCMakeLists is the error when the version can't be
 	// found inside a CMakeLists.txt file.
 	ErrGettingVersionFromCMakeLists
@@ -30,6 +33,9 @@ func (e Error) Error() string {
 	switch e {
 	case ErrNoVersionFilesInDir:
 		return "no version files found in directory"
+
+	case ErrMultipleVersionFiles:
+		return "multiple version files found in directory"
 
 	case ErrGettingVersionFromBuildGradle:
 		return "unable to read version from build.gradle"
