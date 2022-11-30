@@ -143,6 +143,13 @@ grab them:
 vrsn check --was $(<function to get previous value>) --now $(<function to get current value>)
 ```
 
+You can use the `--file` flag to point at a file that is not in the root of the
+git repo (like in a monorepo with independantly versioned services), e.g.:
+
+```bash
+vrsn check --file './services/service-name/VERSION'
+```
+
 ### `bump`
 
 Run `vrsn bump` to increment the current version file.
@@ -160,6 +167,17 @@ Want to automatically commit the version bump? Just use the `--commit` flag. ðŸ™
 
 Don't like the default commit message? Provide your own custom one with
 `--commit-msg`.
+
+You can use the `--file` flag to point at a file that is not in the root of the
+git repo (like in a monorepo with independantly versioned services), e.g.:
+
+```bash
+vrsn bump --file './services/service-name/VERSION'
+```
+
+This approach allows you to easily increment multiple versions in bulk, just
+write a script to iterate over each service that needs bumping and use the
+command `vrsn bump patch --file ./services/$SERIVCE_NAME/VERSION`.
 
 ## Running in Docker
 

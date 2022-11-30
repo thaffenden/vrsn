@@ -3,6 +3,7 @@ package files
 import (
 	"bufio"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -78,9 +79,12 @@ func versionFileMatchers() map[string]versionFileMatcher {
 // getVersionMatcher gets the relevant versionFileMatcher config for the
 // provided input file or errors if there is no config for a file with that name.
 func getVersionMatcher(inputFile string) (versionFileMatcher, error) {
-	matcher, exists := versionFileMatchers()[inputFile]
+	// Split dir and file to support relative paths provided with `--file` CLI flag.
+	_, file := filepath.Split(inputFile)
+
+	matcher, exists := versionFileMatchers()[file]
 	if !exists {
-		return versionFileMatcher{}, fmt.Errorf("%s is not a supported version file type", inputFile)
+		return versionFileMatcher{}, fmt.Errorf("%s is not a supported version file type", file)
 	}
 
 	return matcher, nil
