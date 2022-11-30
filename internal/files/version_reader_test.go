@@ -1,7 +1,7 @@
 package files_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -240,7 +240,7 @@ func TestGetVersionFromString(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			content, err := ioutil.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
+			content, err := os.ReadFile(filepath.Join("testdata", tc.parentDir, tc.inputFile))
 			require.NoError(t, err)
 
 			actual, err := files.GetVersionFromString(tc.inputFile, string(content))
