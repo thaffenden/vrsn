@@ -35,7 +35,7 @@ func (e Error) Error() string {
 		return "no version files found in directory"
 
 	case ErrMultipleVersionFiles:
-		return "multiple version files found in directory"
+		return "multiple version files found in directory, use the --file flag to select the specific file to use"
 
 	case ErrGettingVersionFromBuildGradle:
 		return "unable to read version from build.gradle"

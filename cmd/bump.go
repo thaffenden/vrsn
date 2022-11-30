@@ -30,20 +30,16 @@ func NewCmdBump() *cobra.Command {
 
 			log.Debugf("bump command args: %s", args)
 
-			versionFiles, err := files.GetVersionFilesInDirectory(curDir)
+			versionFileFinder := files.VersionFileFinder{
+				FileFlag:  flags.VersionFile,
+				Logger:    log,
+				SearchDir: curDir,
+			}
+
+			versionFile, err := versionFileFinder.Find()
 			if err != nil {
 				return err
 			}
-
-			if len(versionFiles) > 1 {
-				return errors.Errorf("looks like you have several version files: %s", versionFiles)
-			}
-
-			if len(versionFiles) == 0 {
-				return errors.New("no version file found in directory")
-			}
-
-			versionFile := versionFiles[0]
 
 			currentVersion, err := files.GetVersionFromFile(curDir, versionFile)
 			if err != nil {

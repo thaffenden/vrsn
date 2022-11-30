@@ -14,9 +14,10 @@ import (
 // VersionFileFinder looks for the relevant version file based on the options
 // specified.
 type VersionFileFinder struct {
-	FileFlag  string
-	Logger    logger.Basic
-	SearchDir string
+	ErrorOnNoFilesFound bool
+	FileFlag            string
+	Logger              logger.Basic
+	SearchDir           string
 }
 
 // Find returns the version file based on the config provided.
@@ -25,7 +26,7 @@ func (v VersionFileFinder) Find() (string, error) {
 		v.Logger.Debugf("using --file flag with file %s", v.FileFlag)
 
 		info, err := os.Stat(v.FileFlag)
-		// Handle not exists error first for better user output.
+		// Handle not exists error first for better error output.
 		if errors.Is(err, fs.ErrNotExist) {
 			return "", errors.Errorf("file %s not found", v.FileFlag)
 		}
@@ -41,10 +42,14 @@ func (v VersionFileFinder) Find() (string, error) {
 		return v.FileFlag, nil
 	}
 
+	v.Logger.Debugf("looking for version files in %s", v.SearchDir)
+
 	allVersionFiles, err := GetVersionFilesInDirectory(v.SearchDir)
 	if err != nil {
 		return "", err
 	}
+
+	v.Logger.Debugf("found version files: %v", allVersionFiles)
 
 	numberOfVersionFiles := len(allVersionFiles)
 
@@ -52,11 +57,11 @@ func (v VersionFileFinder) Find() (string, error) {
 		return allVersionFiles[0], nil
 	}
 
-	if numberOfVersionFiles == 0 {
+	if numberOfVersionFiles == 0 && v.ErrorOnNoFilesFound {
 		return "", ErrNoVersionFilesInDir
 	}
 
-	return "", errors.WithMessage(ErrMultipleVersionFiles, "use the --file CLI flag to pick the specific version file to use")
+	return "", ErrMultipleVersionFiles
 }
 
 // GetVersionFilesInDirectory checks the provided directory for supported
