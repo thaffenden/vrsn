@@ -1,5 +1,6 @@
 BINARY_NAME=vrsn
 DIR ?= ./...
+PWD ?= $(shell pwd)
 VERSION ?= $(shell head -n 1 VERSION)
 
 define circleci-docker
@@ -10,9 +11,17 @@ endef
 build:
 	@GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X github.com/thaffenden/vrsn/cmd.Version=${VERSION}" -o ${BINARY_NAME}
 
-.PHONY:
+.PHONY: build-image
 build-image:
 	@docker build --tag ${BINARY_NAME}:local .
+
+.PHONY: build-image-demo-gif
+build-image-demo-gif:
+	@docker build --tag ${BINARY_NAME}-vhs:demo -f ./.docker/demo-gif.Dockerfile .
+
+.PHONY: demo-gif
+demo-gif: build-image-demo-gif
+	@docker run --rm -v ${PWD}:/vhs ${BINARY_NAME}-vhs:demo /vhs/scripts/demo.tape
 
 .PHONY: fmt
 fmt:
