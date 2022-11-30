@@ -34,10 +34,9 @@ Enter 2
 
 Type "vrsn check"
 Enter
-Sleep 1s
+Sleep 3s
 
 Set TypingSpeed 0s
 Hide
 Type "git checkout ./VERSION"
 Enter
-Sleep 2s

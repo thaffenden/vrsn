@@ -20,7 +20,7 @@ build-image-demo-gif:
 	@docker build --tag ${BINARY_NAME}-vhs:demo -f ./.docker/demo-gif.Dockerfile .
 
 .PHONY: demo-gif
-demo-gif: build-image-demo-gif
+demo-gif: build build-image-demo-gif
 	@docker run --rm -v ${PWD}:/vhs ${BINARY_NAME}-vhs:demo /vhs/scripts/demo.tape
 
 .PHONY: fmt
