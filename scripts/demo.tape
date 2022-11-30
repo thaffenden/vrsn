@@ -17,7 +17,7 @@ Sleep 2s
 
 Type "vrsn check"
 Enter 2
-Sleep 2s
+Sleep 3s
 
 Type "vrsn bump"
 Enter
@@ -29,11 +29,11 @@ Sleep 0.5s
 Up 1
 Sleep 0.5s
 Up 1
-Sleep 1s
+Sleep 2.5s
 Enter 2
 
 Type "vrsn check"
-Enter
+Enter 2
 Sleep 3s
 
 Set TypingSpeed 0s
